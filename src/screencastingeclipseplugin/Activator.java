@@ -1,11 +1,7 @@
 package screencastingeclipseplugin;
 
-import java.util.Arrays;
-
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.mylyn.internal.monitor.ui.MonitorUiPlugin;
 import org.eclipse.mylyn.internal.monitor.usage.UiUsageMonitorPlugin;
 import org.eclipse.mylyn.monitor.core.IInteractionEventListener;
 import org.eclipse.mylyn.monitor.ui.MonitorUi;
@@ -15,9 +11,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -37,7 +31,6 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 
 	private IInteractionEventListener interactionListener;
 
-	protected SelectionMonitor selectionMonitor;
 	
 	/**
 	 * The constructor
@@ -69,7 +62,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		
 		plugin = null;
 		
-		MonitorUiPlugin.getDefault().getSelectionMonitors().remove(selectionMonitor);
+
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(WorkbenchPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(JavaPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(WorkbenchPlugin.getDefault().getPreferenceStore());
@@ -106,9 +99,6 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				//Activator.getDefault().selectionMonitor = new SelectionMonitor();
-				//MonitorUiPlugin.getDefault().getSelectionMonitors()
-				//		.add(Activator.getDefault().selectionMonitor);
 
 				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
 						WorkbenchPlugin.getDefault().getPreferenceStore());

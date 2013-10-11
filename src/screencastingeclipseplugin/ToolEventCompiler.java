@@ -1,11 +1,10 @@
 package screencastingeclipseplugin;
 
 import java.io.File;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
+import org.eclipse.mylyn.monitor.core.InteractionEvent;
 
 
 
@@ -14,21 +13,40 @@ public class ToolEventCompiler
 
 	private static Logger fileLogger;
 
-	static {
-		Bundle log4jBundle = Platform.getBundle("org.apache.log4j");
-		if (log4jBundle != null)
-		{
-			System.out.println("There was a big problem");
-		}
-		PropertyConfigurator.configure("./log4j.settings");
-		fileLogger = Logger.getLogger("FileLogging" + ToolEventCompiler.class.getName());
-
-	}
-	
-	public ToolEventCompiler(File outputFolder) 
+	public static void setLogger(Logger logger) 
 	{
-		fileLogger.info("This is a test message");
-		// TODO Auto-generated constructor stub
+		fileLogger = logger;
 	}
+
+	private ToolStreamDiskWriter diskWriter;
+	
+	public ToolEventCompiler(File monitorFolder) 
+	{
+		if (fileLogger == null)		//just in case this hasn't been initialized
+		{
+			fileLogger = Logger.getRootLogger();	
+		}
+		fileLogger.info("Eclipse has started up on "+new Date());
+		
+		
+		this.diskWriter = new ToolStreamDiskWriter(monitorFolder);
+		
+		
+	}
+
+	public void handleInteractionEvent(InteractionEvent event) 
+	{
+		fileLogger.info(MylynInteractionListener.makePrintable(event));
+		handleToolEvent(InteractionEventConvertor.convert(event));
+		
+	}
+
+	private void handleToolEvent(ToolEvent toolEvent) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 }

@@ -6,9 +6,12 @@ import org.eclipse.mylyn.monitor.core.InteractionEvent;
 public class MylynInteractionListener implements IInteractionEventListener {
 
 
+	private ToolEventCompiler toolHandler;
+
+
 	public MylynInteractionListener(ToolEventCompiler compiler) 
 	{
-		// TODO Auto-generated constructor stub
+		this.toolHandler = compiler;
 	}
 
 	@Override
@@ -20,6 +23,8 @@ public class MylynInteractionListener implements IInteractionEventListener {
 
 			System.out.println(KeyBindingDirectory.lookUpKeyBinding(event.getOriginId()));
 		}
+		
+		toolHandler.handleInteractionEvent(event);
 
 	}
 

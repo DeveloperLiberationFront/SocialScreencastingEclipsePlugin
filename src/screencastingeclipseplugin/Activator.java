@@ -2,6 +2,10 @@ package screencastingeclipseplugin;
 
 import java.io.File;
 
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mylyn.internal.monitor.usage.UiUsageMonitorPlugin;
@@ -51,7 +55,23 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		plugin = this;
 
 		System.out.println("normal startup");
+		
 
+	}
+
+	private void setupToolStreamFileLogging() {
+		FileAppender fa = new FileAppender();
+		fa.setName("ToolStreamLogging");
+		fa.setFile("ToolStreamLog.log");
+		fa.setLayout(new PatternLayout("%-4r [%t] %-5p %c{1} %x - %m%n"));
+		fa.setThreshold(Level.ALL);
+		fa.setAppend(false);
+		fa.activateOptions();	//make the logging file
+		
+		Logger.getRootLogger().addAppender(fa);
+		
+		ToolEventCompiler.setLogger(Logger.getLogger("ToolStreamLogging." + ToolEventCompiler.class.getName()));
+		
 	}
 
 	/*
@@ -102,7 +122,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				//taken from 
+				//taken from the sample monitoring program.  Probably monitors more than I need
 				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
 						WorkbenchPlugin.getDefault().getPreferenceStore());
 				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
@@ -123,13 +143,12 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		File outputFolder = new File(MONITOR_FOLDER);
 		if (!outputFolder.exists())
 		{
-			if (!outputFolder.mkdir())
-			{
-				System.err.println("There was a problem making the output folder");
-			}
+			System.err.println("SERIOUS PROBLEM!  THE MONITOR FOLDER DOESN'T EXIST");
 		}
-		ToolEventCompiler compiler = new ToolEventCompiler(outputFolder);
-		this.interactionListener = new MylynInteractionListener(compiler);
+		
+		setupToolStreamFileLogging();
+		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler(outputFolder);
+		this.interactionListener = new MylynInteractionListener(toolStreamCompiler);
 		MonitorUi.addInteractionListener(this.interactionListener);
 	}
 }

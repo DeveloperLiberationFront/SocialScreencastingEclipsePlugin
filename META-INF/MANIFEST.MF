@@ -17,3 +17,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.mylyn.internal.monitor.usage
+Bundle-ClassPath: lib/log4j-1.2.17.jar,
+ .,
+ lib/java-json.jar

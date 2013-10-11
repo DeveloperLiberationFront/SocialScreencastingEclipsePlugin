@@ -1,5 +1,7 @@
 package screencastingeclipseplugin;
 
+import java.io.File;
+
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mylyn.internal.monitor.usage.UiUsageMonitorPlugin;
@@ -25,13 +27,14 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "ScreenCastingEclipsePlugin"; //$NON-NLS-1$
+	private static final String MONITOR_FOLDER = "D:\\workspace\\ScreenCastingLocalHub\\HF";
 
 	// The shared instance
 	private static Activator plugin;
 
 	private IInteractionEventListener interactionListener;
 
-	
+
 	/**
 	 * The constructor
 	 */
@@ -46,9 +49,9 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		
+
 		System.out.println("normal startup");
-		
+
 	}
 
 	/*
@@ -59,16 +62,16 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		super.stop(context);
 		MonitorUi.removeInteractionListener(this.interactionListener);
 		this.interactionListener = null;
-		
+
 		plugin = null;
-		
+
 
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(WorkbenchPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(JavaPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(WorkbenchPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(EditorsPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(PDEPlugin.getDefault().getPreferenceStore());
-		
+
 	}
 
 	/**
@@ -94,12 +97,12 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	@Override
 	public void earlyStartup() {
 		System.out.println("Starting early");
-		
-		
+
+
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-
+				//taken from 
 				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
 						WorkbenchPlugin.getDefault().getPreferenceStore());
 				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
@@ -110,16 +113,23 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 						EditorsPlugin.getDefault().getPreferenceStore());
 				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
 						PDEPlugin.getDefault().getPreferenceStore());
-				
-				
+
+
 			}
 		});
-		
-		
-		
-		
-		
-		this.interactionListener = new MylynInteractionListener();
+
+
+
+		File outputFolder = new File(MONITOR_FOLDER);
+		if (!outputFolder.exists())
+		{
+			if (!outputFolder.mkdir())
+			{
+				System.err.println("There was a problem making the output folder");
+			}
+		}
+		ToolEventCompiler compiler = new ToolEventCompiler(outputFolder);
+		this.interactionListener = new MylynInteractionListener(compiler);
 		MonitorUi.addInteractionListener(this.interactionListener);
 	}
 }

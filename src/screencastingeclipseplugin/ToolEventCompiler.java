@@ -1,6 +1,7 @@
 package screencastingeclipseplugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -13,23 +14,27 @@ public class ToolEventCompiler
 
 	private static Logger fileLogger;
 
+	private ToolStreamDiskWriter diskWriter;
+	
 	public static void setLogger(Logger logger) 
 	{
 		fileLogger = logger;
 	}
-
-	private ToolStreamDiskWriter diskWriter;
 	
 	public ToolEventCompiler(File monitorFolder) 
 	{
-		if (fileLogger == null)		//just in case this hasn't been initialized
+		if (fileLogger == null)		//just in case this hasn't been initialized, set a dummy value to avoid NPEs
 		{
 			fileLogger = Logger.getRootLogger();	
 		}
 		fileLogger.info("Eclipse has started up on "+new Date());
 		
 		
-		this.diskWriter = new ToolStreamDiskWriter(monitorFolder);
+		try {
+			this.diskWriter = new ToolStreamDiskWriter(monitorFolder);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		
 	}
@@ -43,8 +48,19 @@ public class ToolEventCompiler
 
 	private void handleToolEvent(ToolEvent toolEvent) 
 	{
-		// TODO Auto-generated method stub
+		if (toolEvent == null)
+		{
+			fileLogger.debug("Skipping previous command");
+			return;
+		}
+		diskWriter.storeEvent(toolEvent);
 		
+	}
+
+	public void isShuttingDown() 
+	{
+		diskWriter.isShuttingDown();
+		fileLogger.info("Eclipse is shutting down "+new Date());
 	}
 
 

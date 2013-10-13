@@ -22,8 +22,9 @@ public class MylynInteractionListener implements IInteractionEventListener {
 		{
 
 			System.out.println(KeyBindingDirectory.lookUpKeyBinding(event.getOriginId()));
+			System.out.println(CommandNameDirectory.lookUpCommandName(event.getOriginId()));
 		}
-		
+
 		toolHandler.handleInteractionEvent(event);
 
 	}
@@ -32,7 +33,15 @@ public class MylynInteractionListener implements IInteractionEventListener {
 	public void startMonitoring() {}
 
 	@Override
-	public void stopMonitoring() {}
+	public void stopMonitoring() {
+		//This is the signal that we are shutting down
+		System.err.println("Recieved command to shutdown");
+		if (toolHandler != null)
+		{
+			toolHandler.isShuttingDown();
+			toolHandler = null;
+		}
+	}
 
 
 	public static String makePrintable(InteractionEvent event)

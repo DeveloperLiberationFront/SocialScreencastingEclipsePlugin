@@ -55,7 +55,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		plugin = this;
 
 		System.out.println("normal startup");
-		
+
 
 	}
 
@@ -67,11 +67,11 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		fa.setThreshold(Level.ALL);
 		fa.setAppend(false);
 		fa.activateOptions();	//make the logging file
-		
+
 		Logger.getRootLogger().addAppender(fa);
-		
+
 		ToolEventCompiler.setLogger(Logger.getLogger("ToolStreamLogging." + ToolEventCompiler.class.getName()));
-		
+
 	}
 
 	/*
@@ -79,8 +79,11 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		MonitorUi.removeInteractionListener(this.interactionListener);
+		if (interactionListener != null)
+		{
+			this.interactionListener.stopMonitoring();
+			MonitorUi.removeInteractionListener(this.interactionListener);
+		}
 		this.interactionListener = null;
 
 		plugin = null;
@@ -88,10 +91,10 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(WorkbenchPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(JavaPlugin.getDefault().getPreferenceStore());
-		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(WorkbenchPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(EditorsPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(PDEPlugin.getDefault().getPreferenceStore());
 
+		super.stop(context);
 	}
 
 	/**
@@ -145,7 +148,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		{
 			System.err.println("SERIOUS PROBLEM!  THE MONITOR FOLDER DOESN'T EXIST");
 		}
-		
+
 		setupToolStreamFileLogging();
 		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler(outputFolder);
 		this.interactionListener = new MylynInteractionListener(toolStreamCompiler);

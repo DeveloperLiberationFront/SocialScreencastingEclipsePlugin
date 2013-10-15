@@ -33,7 +33,7 @@ public class ToolStreamDiskWriter implements RotatingFileManagerListener {
 			}
 		}
 
-		this.rotatingFileManager = new RotatingFileManager(toolStreamFolder, "Eclipse", "log", this);
+		this.rotatingFileManager = new RotatingFileManager(toolStreamFolder, "Eclipse.", "log", this);
 		rotatingFileManager.makeNextFile();
 
 		//sets up the timer that regulates when the file should be changed

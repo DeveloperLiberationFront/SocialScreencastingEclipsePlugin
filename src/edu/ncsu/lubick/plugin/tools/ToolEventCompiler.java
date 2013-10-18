@@ -1,4 +1,4 @@
-package edu.ncsu.lubick.screencasting.eclipse.plugin;
+package edu.ncsu.lubick.plugin.tools;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,9 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
+
+import edu.ncsu.lubick.plugin.InteractionEventConvertor;
+import edu.ncsu.lubick.plugin.MylynInteractionListener;
 
 
 

@@ -1,4 +1,4 @@
-package edu.ncsu.lubick.screencasting.eclipse.plugin;
+package edu.ncsu.lubick.plugin.tools;
 
 import java.util.Date;
 

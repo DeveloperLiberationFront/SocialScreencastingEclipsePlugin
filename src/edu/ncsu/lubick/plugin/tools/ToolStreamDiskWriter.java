@@ -1,4 +1,4 @@
-package edu.ncsu.lubick.screencasting.eclipse.plugin;
+package edu.ncsu.lubick.plugin.tools;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +9,9 @@ import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import edu.ncsu.lubick.util.RotatingFileManager;
+import edu.ncsu.lubick.util.RotatingFileManagerListener;
 
 public class ToolStreamDiskWriter implements RotatingFileManagerListener {
 

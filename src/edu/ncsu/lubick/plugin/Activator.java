@@ -1,4 +1,4 @@
-package edu.ncsu.lubick.screencasting.eclipse.plugin;
+package edu.ncsu.lubick.plugin;
 
 import java.io.File;
 
@@ -19,6 +19,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import edu.ncsu.lubick.plugin.tools.ToolEventCompiler;
 
 /**
  * The activator class controls the plug-in life cycle

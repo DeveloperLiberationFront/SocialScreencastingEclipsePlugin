@@ -11,7 +11,7 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="edu.ncsu.lubick.screencasting.eclipse.plugin.Activator">
+            class="edu.ncsu.lubick.plugin.Activator">
       </startup>
    </extension>
 

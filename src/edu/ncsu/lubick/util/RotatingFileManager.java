@@ -1,4 +1,4 @@
-package edu.ncsu.lubick.screencasting.eclipse.plugin;
+package edu.ncsu.lubick.util;
 
 import java.io.File;
 import java.io.FileOutputStream;

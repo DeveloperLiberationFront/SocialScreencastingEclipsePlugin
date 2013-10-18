@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ScreenCastingEclipsePlugin
 Bundle-SymbolicName: ScreenCastingEclipsePlugin;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: edu.ncsu.lubick.screencasting.eclipse.plugin.Activator
+Bundle-Activator: edu.ncsu.lubick.plugin.Activator
 Bundle-Vendor: edu.ncsu
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

@@ -1,8 +1,12 @@
-package edu.ncsu.lubick.screencasting.eclipse.plugin;
+package edu.ncsu.lubick.plugin;
 
 import java.util.Date;
 
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
+
+import edu.ncsu.lubick.plugin.tools.ToolEvent;
+import edu.ncsu.lubick.util.CommandNameDirectory;
+import edu.ncsu.lubick.util.KeyBindingDirectory;
 
 
 /**

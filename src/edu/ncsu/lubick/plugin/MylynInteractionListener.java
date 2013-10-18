@@ -3,7 +3,7 @@ package edu.ncsu.lubick.plugin;
 import org.eclipse.mylyn.monitor.core.IInteractionEventListener;
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
 
-import edu.ncsu.lubick.plugin.tools.ToolEventCompiler;
+import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.KeyBindingDirectory;
 

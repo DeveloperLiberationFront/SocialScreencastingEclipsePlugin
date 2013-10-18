@@ -1,4 +1,4 @@
-package edu.ncsu.lubick.plugin.tools;
+package edu.ncsu.lubick.toolmanagement;
 
 import java.util.Date;
 

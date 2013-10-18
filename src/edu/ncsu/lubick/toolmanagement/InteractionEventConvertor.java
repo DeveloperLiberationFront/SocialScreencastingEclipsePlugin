@@ -1,16 +1,16 @@
-package edu.ncsu.lubick.plugin;
+package edu.ncsu.lubick.toolmanagement;
 
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
 
-import edu.ncsu.lubick.plugin.tools.ToolEvent;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.KeyBindingDirectory;
 
 
 /**
- * Static class that converts Eclipse's InteractionEvent to a ToolEvent similar to what LocalHub will handle
+ * converts Eclipse's InteractionEvent to a ToolEvent that LocalHub can handle
  * @author KevinLubick
  *
  */
@@ -19,10 +19,20 @@ public class InteractionEventConvertor
 
 	private static final String MYLYN_MENU = "menu";
 	private static final String MYLYN_KEYBINDING = "keybinding";
-	private static boolean wasMenuEventPreviously = false;
-	private static Date previousTimeStamp = null;
 	
-	public static ToolEvent convert(InteractionEvent event) 
+	
+	private boolean wasMenuEventPreviously = false;
+	private Date previousTimeStamp = null;
+	private Logger loggerForProblems;
+	private final String loggingPrefix = "["+getClass()+"]";
+	
+	public InteractionEventConvertor(Logger loggerForProblems) 
+	{
+		this.loggerForProblems = loggerForProblems;
+		
+	}
+
+	public ToolEvent convert(InteractionEvent event) 
 	{
 		//we only handle these types of events
 		if (!event.getDelta().equals(MYLYN_KEYBINDING) && !event.getDelta().equals(MYLYN_MENU))
@@ -52,15 +62,20 @@ public class InteractionEventConvertor
 		return retVal;
 	}
 
-	private static boolean checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(InteractionEvent event) {
+	private boolean checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(InteractionEvent event) {
 		if (!wasMenuEventPreviously)
 			return false;
 		if (event.getDate().equals(previousTimeStamp))
 			return true;
 		
-		System.out.println("Unusual happenings.  Menu item was followed by a non-matching \"keybinding\".  ");
-		System.out.println(String.format("Date %s != Date %s (%d != %d)", previousTimeStamp, event.getDate(), previousTimeStamp.getTime(), event.getDate().getTime()));
+		logUnusualBehavior("Unusual happenings.  Menu item was followed by a non-matching \"keybinding\".  ");
+		logUnusualBehavior(String.format("Date %s != Date %s (%d != %d)", previousTimeStamp, event.getDate(), previousTimeStamp.getTime(), event.getDate().getTime()));
 		return false;
+	}
+	
+	private void logUnusualBehavior(String behavior)
+	{
+		loggerForProblems.info(this.loggingPrefix + behavior);
 	}
 
 }

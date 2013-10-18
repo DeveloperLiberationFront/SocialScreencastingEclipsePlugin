@@ -1,4 +1,4 @@
-package screencastingeclipseplugin;
+package edu.ncsu.lubick.screencasting.eclipse.plugin;
 
 import java.io.File;
 

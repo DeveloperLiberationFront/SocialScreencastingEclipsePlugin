@@ -3,32 +3,6 @@
 <plugin>
 
    <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="Sample Category"
-            id="ScreenCastingEclipsePlugin">
-      </category>
-      <view
-            name="Sample View"
-            icon="icons/sample.gif"
-            category="ScreenCastingEclipsePlugin"
-            class="screencastingeclipseplugin.views.SampleView"
-            id="screencastingeclipseplugin.views.SampleView">
-      </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               ratio="0.5"
-               relative="org.eclipse.ui.views.ProblemView"
-               relationship="right"
-               id="screencastingeclipseplugin.views.SampleView">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.help.contexts">
       <contexts
             file="contexts.xml">
@@ -37,7 +11,7 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="screencastingeclipseplugin.Activator">
+            class="edu.ncsu.lubick.screencasting.eclipse.plugin.Activator">
       </startup>
    </extension>
 

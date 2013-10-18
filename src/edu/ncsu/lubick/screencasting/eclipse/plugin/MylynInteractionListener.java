@@ -1,4 +1,4 @@
-package screencastingeclipseplugin;
+package edu.ncsu.lubick.screencasting.eclipse.plugin;
 
 import org.eclipse.mylyn.monitor.core.IInteractionEventListener;
 import org.eclipse.mylyn.monitor.core.InteractionEvent;

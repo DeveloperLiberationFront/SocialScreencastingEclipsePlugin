@@ -1,4 +1,4 @@
-package screencastingeclipseplugin;
+package edu.ncsu.lubick.screencasting.eclipse.plugin;
 
 public interface RotatingFileManagerListener 
 {

@@ -1,4 +1,4 @@
-package screencastingeclipseplugin;
+package edu.ncsu.lubick.screencasting.eclipse.plugin;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.PlatformUI;

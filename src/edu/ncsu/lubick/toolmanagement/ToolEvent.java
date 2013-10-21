@@ -60,4 +60,13 @@ public class ToolEvent
 	public int getDuration() {
 		return duration;
 	}
+
+	@Override
+	public String toString() {
+		return "ToolEvent [toolName=" + toolName + ", toolClass=" + toolClass
+				+ ", keyPresses=" + keyPresses + ", timeStamp=" + timeStamp
+				+ ", duration=" + duration + "]";
+	}
+	
+	
 }

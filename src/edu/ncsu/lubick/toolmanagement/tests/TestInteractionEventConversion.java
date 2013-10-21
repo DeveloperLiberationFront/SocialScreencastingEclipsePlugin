@@ -18,7 +18,21 @@ import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.CommandNameServce;
 import edu.ncsu.lubick.util.KeyBindingDirectory;
 
-public class TestInteractionEventConversion {
+public class TestInteractionEventConversion 
+{
+	//Keybindings
+	private static final String CTRL_SPACE = "Ctrl+Space";
+	
+	//IDS
+	private static final String ID_CONTENT_ASSIST = "org.eclipse.ui.edit.text.contentAssist.proposals";
+	
+	//NAMES
+	private static final String NAME_CONTENT_ASSIST = "Content Assist";
+	
+	
+	//misc
+	private static final int DEFAULT_DURATION = 15000;
+	private static final String KEYBINDING_DELTA = "keybinding";
 	
 	private InteractionEventConvertor converter;
 
@@ -44,43 +58,41 @@ public class TestInteractionEventConversion {
 	@Test
 	public void testBasicConversion() 
 	{
-		InteractionEvent ie = makeMockedInteractionEvent();
+		InteractionEvent ie = makeKeyBoardCommandInteractionEvent(ID_CONTENT_ASSIST, new Date(), new Date());
 		
 		ToolEvent outputEvent = converter.convert(ie);
 		
 		assertNotNull(outputEvent);
-		
+		assertEquals(CTRL_SPACE, outputEvent.getToolKeyPresses());
+		assertEquals(NAME_CONTENT_ASSIST, outputEvent.getToolName());
+		assertEquals(DEFAULT_DURATION, outputEvent.getDuration());
 		System.out.println(outputEvent);
 		
 	}
 
-	private static InteractionEvent makeMockedInteractionEvent() {
-		
-		InteractionEvent ie = mock(InteractionEvent.class);
-		Date startDate = new Date();
-		Date endDate = new Date();
-		
-		when(ie.getDelta()).thenReturn("keybinding");
-		
-		when(ie.getDate()).thenReturn(startDate);
-		when(ie.getEndDate()).thenReturn(endDate);
-		when(ie.getKind()).thenReturn(Kind.COMMAND);
-		when(ie.getOriginId()).thenReturn("org.eclipse.ui.edit.text.contentAssist.proposals");
-		
-		//InteractionEvent ie = new InteractionEvent(Kind.COMMAND, null, null, "org.eclipse.ui.edit.text.contentAssist.proposals", null, "keybinding", 1.0f, new Date(), new Date());
+	private static InteractionEvent makeMockInteractionEvent(Kind kindOfCommand, String commandId, String deltaType, Date startDate, Date endDate) 
+	{
+		//could be mock(InteractionEvent), but this is more "lifelike"
+		return new InteractionEvent(kindOfCommand, null, null, commandId, null, deltaType, 1.0f, startDate, endDate);
+	}
+
+	private static InteractionEvent makeKeyBoardCommandInteractionEvent(String commandId, Date startDate, Date endDate) 
+	{	
+		InteractionEvent ie = makeMockInteractionEvent(Kind.COMMAND, KEYBINDING_DELTA, commandId, startDate, endDate);
 		return ie;
 	}
-	
+
 	private static IBindingService makeMockedKeyBindingService() 
 	{
 		IBindingService service = mock(IBindingService.class);
+		when(service.getBestActiveBindingFormattedFor(ID_CONTENT_ASSIST)).thenReturn(CTRL_SPACE);
 		return service;
 	}
 
 	private static CommandNameServce makeMockedCommandService() 
 	{
 		CommandNameServce testService = mock(CommandNameServce.class);
-		
+		when(testService.lookUpCommandName(ID_CONTENT_ASSIST)).thenReturn(NAME_CONTENT_ASSIST);
 		return testService;
 	}
 

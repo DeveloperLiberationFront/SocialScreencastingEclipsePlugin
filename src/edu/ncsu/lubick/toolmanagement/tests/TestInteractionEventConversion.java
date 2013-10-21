@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
 import org.eclipse.mylyn.monitor.core.InteractionEvent.Kind;
@@ -60,13 +61,18 @@ public class TestInteractionEventConversion
 	{
 		InteractionEvent ie = makeKeyBoardCommandInteractionEvent(ID_CONTENT_ASSIST, new Date(), new Date());
 		
-		ToolEvent outputEvent = converter.convert(ie);
+		converter.foundThisInteractionEvent(ie);
 		
-		assertNotNull(outputEvent);
+		List<ToolEvent> outputEvents = converter.getConvertedEvents();
+		
+		assertNotNull(outputEvents);
+		assertEquals(1, outputEvents.size());
+		
+		ToolEvent outputEvent = outputEvents.get(0);
 		assertEquals(CTRL_SPACE, outputEvent.getToolKeyPresses());
 		assertEquals(NAME_CONTENT_ASSIST, outputEvent.getToolName());
 		assertEquals(DEFAULT_DURATION, outputEvent.getDuration());
-		System.out.println(outputEvent);
+
 		
 	}
 
@@ -78,7 +84,7 @@ public class TestInteractionEventConversion
 
 	private static InteractionEvent makeKeyBoardCommandInteractionEvent(String commandId, Date startDate, Date endDate) 
 	{	
-		InteractionEvent ie = makeMockInteractionEvent(Kind.COMMAND, KEYBINDING_DELTA, commandId, startDate, endDate);
+		InteractionEvent ie = makeMockInteractionEvent(Kind.COMMAND, commandId ,KEYBINDING_DELTA, startDate, endDate);
 		return ie;
 	}
 

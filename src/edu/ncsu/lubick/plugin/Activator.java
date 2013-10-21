@@ -15,12 +15,17 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
+import edu.ncsu.lubick.util.CommandNameDirectory;
+import edu.ncsu.lubick.util.EclipseCommandNameService;
+import edu.ncsu.lubick.util.KeyBindingDirectory;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -29,7 +34,8 @@ import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
  */
 
 @SuppressWarnings("restriction")
-public class Activator extends AbstractUIPlugin implements IStartup{
+public class Activator extends AbstractUIPlugin implements IStartup
+{
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "ScreenCastingEclipsePlugin"; //$NON-NLS-1$
@@ -58,7 +64,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 
 		System.out.println("normal startup");
 
-
+		
 	}
 
 	private void setupToolStreamFileLogging() {
@@ -152,6 +158,12 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		}
 
 		setupToolStreamFileLogging();
+		
+		KeyBindingDirectory.initializeBindingService((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class));
+		
+		EclipseCommandNameService commandService = new EclipseCommandNameService((ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class));
+		CommandNameDirectory.initializeCommandService(commandService);
+		
 		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler(outputFolder);
 		this.interactionListener = new MylynInteractionListener(toolStreamCompiler);
 		MonitorUi.addInteractionListener(this.interactionListener);

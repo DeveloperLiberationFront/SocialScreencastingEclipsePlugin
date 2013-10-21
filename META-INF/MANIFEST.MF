@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors;bundle-version="3.8.100"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.mylyn.internal.monitor.usage
+Import-Package: org.eclipse.mylyn.internal.monitor.usage,
+ org.junit;version="4.11.0"
 Bundle-ClassPath: lib/log4j-1.2.17.jar,
  .,
  lib/java-json.jar

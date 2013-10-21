@@ -26,11 +26,19 @@ public class InteractionEventConvertor
 	private Logger loggerForProblems;
 	private final String loggingPrefix = "["+getClass()+"]";
 	
+	
+	public InteractionEventConvertor() {
+		this.loggerForProblems = Logger.getRootLogger();	//dummy value to avoid NPEs
+	}
+	
 	public InteractionEventConvertor(Logger loggerForProblems) 
 	{
 		this.loggerForProblems = loggerForProblems;
 		
 	}
+	
+
+
 
 	public ToolEvent convert(InteractionEvent event) 
 	{

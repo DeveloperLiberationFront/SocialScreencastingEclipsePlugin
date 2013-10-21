@@ -85,6 +85,7 @@ public class InteractionEventConvertor
 	private void logUnusualBehavior(String behavior)
 	{
 		loggerForProblems.info(this.loggingPrefix + behavior);
+		System.out.println(this.loggingPrefix + behavior);
 	}
 
 	public void foundThisInteractionEvent(InteractionEvent event) {

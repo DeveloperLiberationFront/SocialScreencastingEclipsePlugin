@@ -88,33 +88,36 @@ public class InteractionEventConvertor
 		System.out.println(this.loggingPrefix + behavior);
 	}
 
-	public void foundThisInteractionEvent(InteractionEvent event) {
+	public void foundInteractionEvents(InteractionEvent... events) {
 		//we only handle these types of events
-		if (!event.getDelta().equals(MYLYN_KEYBINDING) && !event.getDelta().equals(MYLYN_MENU))
+		for(InteractionEvent event:events)
 		{
-			return;
+			if (!event.getDelta().equals(MYLYN_KEYBINDING) && !event.getDelta().equals(MYLYN_MENU))
+			{
+				continue;
+			}
+
+
+			previousTimeStamp = event.getDate();
+
+			String keyPresses = "MENU";
+			if (event.getDelta().equals(MYLYN_KEYBINDING) && !checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(event))
+			{
+				keyPresses = KeyBindingDirectory.lookUpKeyBinding(event.getOriginId());
+			}
+			if (event.getDelta().equals(MYLYN_MENU))
+			{
+				wasMenuEventPreviously = true;
+				continue;		//we'll wait until next time
+			}
+
+			wasMenuEventPreviously = false;
+			String toolName = CommandNameDirectory.lookUpCommandName(event.getOriginId());
+
+			ToolEvent madeEvent = new ToolEvent(toolName, "", keyPresses, event.getDate(), 15000);
+
+			convertedEvents.add(madeEvent);
 		}
-
-
-		previousTimeStamp = event.getDate();
-
-		String keyPresses = "MENU";
-		if (event.getDelta().equals(MYLYN_KEYBINDING) && !checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(event))
-		{
-			keyPresses = KeyBindingDirectory.lookUpKeyBinding(event.getOriginId());
-		}
-		if (event.getDelta().equals(MYLYN_MENU))
-		{
-			wasMenuEventPreviously = true;
-			return;		//we'll wait until next time
-		}
-
-		wasMenuEventPreviously = false;
-		String toolName = CommandNameDirectory.lookUpCommandName(event.getOriginId());
-
-		ToolEvent madeEvent = new ToolEvent(toolName, "", keyPresses, event.getDate(), 15000);
-
-		convertedEvents.add(madeEvent);
 	}
 
 	public List<ToolEvent> getConvertedEvents() 

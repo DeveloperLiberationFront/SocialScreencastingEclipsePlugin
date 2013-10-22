@@ -49,7 +49,7 @@ public class TestInteractionEventConversion
 	{
 		InteractionEvent ie = makeKeyBoardCommandInteractionEvent(ID_CONTENT_ASSIST, new Date());
 
-		converter.foundThisInteractionEvent(ie);
+		converter.foundInteractionEvents(ie);
 
 		List<ToolEvent> outputEvents = converter.getConvertedEvents();
 
@@ -75,14 +75,14 @@ public class TestInteractionEventConversion
 		InteractionEvent menuEvent = makeMenuCommandInteractionEvent(MENU_NAME_OPEN_CALL_HIERARCHY, startAndEndDate, startAndEndDate);
 		InteractionEvent correspondingKeyboardCommand = makeKeyBoardCommandInteractionEvent(ID_OPEN_CALL_HIERARCHY, startAndEndDate);
 
-		converter.foundThisInteractionEvent(menuEvent);
+		converter.foundInteractionEvents(menuEvent);
 
 		List<ToolEvent> outputEvents = converter.getConvertedEvents();
 
 		assertNotNull(outputEvents);
 		assertEquals(0, outputEvents.size());
 
-		converter.foundThisInteractionEvent(correspondingKeyboardCommand);
+		converter.foundInteractionEvents(correspondingKeyboardCommand);
 
 		outputEvents = converter.getConvertedEvents();
 
@@ -122,11 +122,7 @@ public class TestInteractionEventConversion
 		InteractionEvent openDeclarationEvent = makeKeyBoardCommandInteractionEvent(ID_OPEN_DECLARATION, secondDate);
 		InteractionEvent renameRefactorEvent = makeKeyBoardCommandInteractionEvent(ID_RENAME_REFACTOR, thirdDate);
 		
-		converter.foundThisInteractionEvent(firstWorkbenchWindowEvent);
-		converter.foundThisInteractionEvent(openDeclarationEvent);
-		converter.foundThisInteractionEvent(renameRefactorEvent);
-		converter.foundThisInteractionEvent(secondWorkbenchWindowEvent);
-		
+		converter.foundInteractionEvents(firstWorkbenchWindowEvent, openDeclarationEvent, renameRefactorEvent, secondWorkbenchWindowEvent);
 		
 		List<ToolEvent> outputEvents = converter.getConvertedEvents();
 
@@ -143,6 +139,38 @@ public class TestInteractionEventConversion
 		assertEquals(NAME_RENAME_REFACTOR, outputEvent.getToolName());
 		assertEquals(DEFAULT_DURATION, outputEvent.getDuration());
 		
+	}
+	
+	@Test
+	public void testDurationCheckingWithWorkbenchWindowMethod() throws Exception 
+	{
+		/*  This emulates this pattern
+		  	[startdate: Wed Oct 16 21:08:43 EDT 2013, kind: command, sourceHandle: null, origin: IntroduceParameterObjectAction,
+		  			delta: menu, endDate: Wed Oct 16 21:08:43 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+			[startdate: Wed Oct 16 21:08:43 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.jdt.ui.edit.text.java.introduce.parameter.object,
+			 		delta: keybinding, endDate: Wed Oct 16 21:08:43 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+			
+			[startdate: Wed Oct 16 21:09:04 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.ui.internal.WorkbenchWindow,
+			 		delta: activated, endDate: Wed Oct 16 21:09:04 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+		 */
+		Date firstAndSecondDate = humanDateFormat.parse("Wed Oct 16 21:08:43 EDT 2013");
+		Date thirdDate = humanDateFormat.parse("Wed Oct 16 21:09:04 EDT 2013");
+		
+		InteractionEvent introduceParameterMenuEvent = makeMenuCommandInteractionEvent(MENU_INTRODUCE_PARAMETER_OBJECT, firstAndSecondDate, firstAndSecondDate);
+		InteractionEvent introduceParameterKeyboardEvent = makeKeyBoardCommandInteractionEvent(ID_INTRODUCE_PARAMETER_OBJECT, firstAndSecondDate);
+		InteractionEvent workbenchWindowEvent = makeWorkbenchWindowEvent(thirdDate);
+		
+		converter.foundInteractionEvents(introduceParameterMenuEvent,introduceParameterKeyboardEvent,workbenchWindowEvent);
+		
+		List<ToolEvent> outputEvents = converter.getConvertedEvents();
+
+		assertNotNull(outputEvents);
+		assertEquals(1, outputEvents.size());
+
+		ToolEvent outputEvent = outputEvents.get(0);
+		assertEquals(MENU_KEYBINDING, outputEvent.getToolKeyPresses());
+		assertEquals(NAME_INTRODUCE_PARAMETER_OBJECT, outputEvent.getToolName());
+		assertEquals(21*1000, outputEvent.getDuration()); //This should be 21:09:04 - 21:08:43 == 21 seconds
 	}
 
 

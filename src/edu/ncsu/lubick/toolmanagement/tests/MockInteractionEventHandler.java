@@ -15,6 +15,7 @@ public class MockInteractionEventHandler
 
 	//Menu Names //which are different than NAMES.  NAMES are the offical ones listed in the Command lookup table.  These are what the MENU calls them
 	static final String MENU_NAME_OPEN_CALL_HIERARCHY = "OpenCallHierarchy";
+	static final String MENU_INTRODUCE_PARAMETER_OBJECT = "IntroduceParameterObjectAction";
 
 	//Keybindings
 	static final String MENU_KEYBINDING = "MENU";	//not a keybinding, but this is what the local hub will be expecting for menu actions
@@ -27,12 +28,15 @@ public class MockInteractionEventHandler
 	static final String ID_OPEN_CALL_HIERARCHY = "org.eclipse.jdt.ui.edit.text.java.open.call.hierarchy";
 	static final String ID_OPEN_DECLARATION= "org.eclipse.jdt.ui.edit.text.java.open.editor";
 	static final String ID_RENAME_REFACTOR = "org.eclipse.jdt.ui.edit.text.java.rename.element";
+	static final String ID_INTRODUCE_PARAMETER_OBJECT = "org.eclipse.jdt.ui.edit.text.java.introduce.parameter.object";
+
 	
 	//NAMES
 	static final String NAME_CONTENT_ASSIST = "Content Assist";
 	static final String NAME_OPEN_CALL_HIERARCHY = "Open Call Hierarchy";
 	static final String NAME_OPEN_DECLARATION = "Open Declaration";
 	static final String NAME_RENAME_REFACTOR = "Rename - Refactoring";
+	static final String NAME_INTRODUCE_PARAMETER_OBJECT = "Introduce Parameter Object";
 	
 	//misc
 	static final int DEFAULT_DURATION = 15000;
@@ -71,6 +75,7 @@ public class MockInteractionEventHandler
 		addKeyBinding(service, ID_OPEN_CALL_HIERARCHY, MENU_KEYBINDING);
 		addKeyBinding(service, ID_OPEN_DECLARATION, F3);
 		addKeyBinding(service, ID_RENAME_REFACTOR, ALT_SHIFT_R);
+		addKeyBinding(service, ID_INTRODUCE_PARAMETER_OBJECT, MENU_KEYBINDING);
 		return service;
 	}
 
@@ -85,12 +90,13 @@ public class MockInteractionEventHandler
 
 	static CommandNameServce makeMockedCommandService() 
 	{
-		CommandNameServce testService = mock(CommandNameServce.class);
-		addCommandNamePair(testService, ID_CONTENT_ASSIST, NAME_CONTENT_ASSIST);
-		addCommandNamePair(testService, ID_OPEN_CALL_HIERARCHY, NAME_OPEN_CALL_HIERARCHY);
-		addCommandNamePair(testService, ID_OPEN_DECLARATION, NAME_OPEN_DECLARATION);
-		addCommandNamePair(testService, ID_RENAME_REFACTOR, NAME_RENAME_REFACTOR);
-		return testService;
+		CommandNameServce service = mock(CommandNameServce.class);
+		addCommandNamePair(service, ID_CONTENT_ASSIST, NAME_CONTENT_ASSIST);
+		addCommandNamePair(service, ID_OPEN_CALL_HIERARCHY, NAME_OPEN_CALL_HIERARCHY);
+		addCommandNamePair(service, ID_OPEN_DECLARATION, NAME_OPEN_DECLARATION);
+		addCommandNamePair(service, ID_RENAME_REFACTOR, NAME_RENAME_REFACTOR);
+		addCommandNamePair(service, ID_INTRODUCE_PARAMETER_OBJECT, NAME_INTRODUCE_PARAMETER_OBJECT);
+		return service;
 	}
 
 	private static void addCommandNamePair(CommandNameServce service, String commandId, String commandName) {

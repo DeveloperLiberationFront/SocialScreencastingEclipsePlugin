@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
+import org.eclipse.mylyn.monitor.core.InteractionEvent.Kind;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,34 +48,60 @@ public class TestInteractionEventConversion
 	@Test
 	public void testBasicKeystrokeConversion() throws Exception
 	{
-		InteractionEvent ie = makeKeyBoardCommandInteractionEvent(ID_CONTENT_ASSIST, new Date());
+		Date firstDate = new Date(0);
+		InteractionEvent contentAssist = makeKeyBoardCommandInteractionEvent(ID_CONTENT_ASSIST, firstDate);
 
-		converter.foundInteractionEvents(ie);
+		converter.foundInteractionEvents(contentAssist);
 
 		List<ToolEvent> outputEvents = converter.getConvertedEvents();
 
 		assertNotNull(outputEvents);
-		assertEquals(1, outputEvents.size());
+		assertEquals(0, outputEvents.size());
+		//This event shouldn't be ready yet because we don't know the duration of the random event above (which is, of course,
+		//not random)
+		
+		converter.isShuttingDown(new Date(60*1000));
+		
 
 		ToolEvent outputEvent = outputEvents.get(0);
 		assertEquals(CTRL_SPACE, outputEvent.getToolKeyPresses());
 		assertEquals(NAME_CONTENT_ASSIST, outputEvent.getToolName());
-		assertEquals(DEFAULT_DURATION, outputEvent.getDuration());
+		assertEquals(DEFAULT_KEYBINDING_DURATION, outputEvent.getDuration());
 
 
 	}
 
 	@Test
-	public void testBasicMenuConversion() throws Exception 
+	public void testMenuOpenCallHierarchyConversion() throws Exception 
 	{//org.eclipse.jdt.ui.edit.text.java.open.call.hierarchy
 		//Open Call Hierarchy
 		//Eclipse generates two events for menu operations : a menu one and then a keyboard one that matches what was done.
-		//This emulates that behavior
+		//This emulates that behavior, with some additional events that are a direct cause of the tool (not related to the user) and then 
+		//the user clicks on something related to the tool 4 seconds later
+		/*
+		  	1830440 [startdate: Wed Oct 16 21:16:14 EDT 2013, kind: command, sourceHandle: null, origin: OpenCallHierarchy,
+		  			delta: menu, endDate: Wed Oct 16 21:16:14 EDT 2013, navigation: null
+			1830441 [startdate: Wed Oct 16 21:16:14 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.jdt.ui.edit.text.java.open.call.hierarchy,
+			 		delta: keybinding, endDate: Wed Oct 16 21:16:14 EDT 2013, navigation: null
+			1830498 [startdate: Wed Oct 16 21:16:14 EDT 2013, kind: preference, sourceHandle: null, origin: org.eclipse.jdt.ui.JavaPerspective, 
+					delta: perspective changed: actionSetShow, endDate: Wed Oct 16 21:16:14 EDT 2013, navigation: null
+			1830503 [startdate: Wed Oct 16 21:16:14 EDT 2013, kind: preference, sourceHandle: null, origin: org.eclipse.jdt.callhierarchy.view, 
+					delta: perspective changed: viewShow, endDate: Wed Oct 16 21:16:14 EDT 2013, navigation: null
+			1830503 [startdate: Wed Oct 16 21:16:14 EDT 2013, kind: preference, sourceHandle: null, origin: org.eclipse.jdt.ui.JavaPerspective, 
+					delta: perspective changed: viewShow, endDate: Wed Oct 16 21:16:14 EDT 2013, navigation: null
+			1834561 [startdate: Wed Oct 16 21:16:18 EDT 2013, kind: preference, sourceHandle: null, origin: org.eclipse.jdt.ui.JavaPerspective, 
+					delta: perspective changed: actionSetShow, endDate: Wed Oct 16 21:16:18 EDT 2013, navigation: null
+		 */
 
-		Date startAndEndDate = new Date();
+		Date startAndEndDate = humanDateFormat.parse("Wed Oct 16 21:16:14 EDT 2013");
+		Date userEventDate = humanDateFormat.parse("Wed Oct 16 21:16:18 EDT 2013");
 		InteractionEvent menuEvent = makeMenuCommandInteractionEvent(MENU_NAME_OPEN_CALL_HIERARCHY, startAndEndDate, startAndEndDate);
 		InteractionEvent correspondingKeyboardCommand = makeKeyBoardCommandInteractionEvent(ID_OPEN_CALL_HIERARCHY, startAndEndDate);
-
+		InteractionEvent sideEffectPerspectiveEvent1 = makeMockInteractionEvent(Kind.PREFERENCE, "org.eclipse.jdt.ui.JavaPerspective", "perspective changed: actionSetShow", startAndEndDate, startAndEndDate);
+		InteractionEvent sideEffectPerspectiveEvent2 = makeMockInteractionEvent(Kind.PREFERENCE, "org.eclipse.jdt.callhierarchy.view", "perspective changed: viewShow", startAndEndDate, startAndEndDate);
+		InteractionEvent sideEffectPerspectiveEvent3 = makeMockInteractionEvent(Kind.PREFERENCE, "org.eclipse.jdt.ui.JavaPerspective", "perspective changed: viewShow", startAndEndDate, startAndEndDate);
+		InteractionEvent userGeneratedPerspectiveEvent = makeMockInteractionEvent(Kind.PREFERENCE, "org.eclipse.jdt.ui.JavaPerspective", "perspective changed: actionSetShow", userEventDate, userEventDate);
+		
 		converter.foundInteractionEvents(menuEvent);
 
 		List<ToolEvent> outputEvents = converter.getConvertedEvents();
@@ -83,16 +110,27 @@ public class TestInteractionEventConversion
 		assertEquals(0, outputEvents.size());
 
 		converter.foundInteractionEvents(correspondingKeyboardCommand);
+		outputEvents = converter.getConvertedEvents();
 
+		assertNotNull(outputEvents);
+		assertEquals(0, outputEvents.size());
+		
+		converter.foundInteractionEvents(sideEffectPerspectiveEvent1,sideEffectPerspectiveEvent2,sideEffectPerspectiveEvent3);
+		outputEvents = converter.getConvertedEvents();
+
+		assertNotNull(outputEvents);
+		assertEquals(0, outputEvents.size());
+		
+		converter.foundInteractionEvents(userGeneratedPerspectiveEvent);
 		outputEvents = converter.getConvertedEvents();
 
 		assertNotNull(outputEvents);
 		assertEquals(1, outputEvents.size());
-
+		
 		ToolEvent outputEvent = outputEvents.get(0);
 		assertEquals(MENU_KEYBINDING, outputEvent.getToolKeyPresses());
 		assertEquals(NAME_OPEN_CALL_HIERARCHY, outputEvent.getToolName());
-		assertEquals(DEFAULT_DURATION, outputEvent.getDuration());
+		assertEquals(4*1000, outputEvent.getDuration());
 
 
 	}
@@ -132,12 +170,12 @@ public class TestInteractionEventConversion
 		ToolEvent outputEvent = outputEvents.get(0);
 		assertEquals(F3, outputEvent.getToolKeyPresses());
 		assertEquals(NAME_OPEN_DECLARATION, outputEvent.getToolName());
-		assertEquals(DEFAULT_DURATION, outputEvent.getDuration());
+		assertEquals(3*1000, outputEvent.getDuration());
 		
 		outputEvent = outputEvents.get(1);
 		assertEquals(ALT_SHIFT_R, outputEvent.getToolKeyPresses());
 		assertEquals(NAME_RENAME_REFACTOR, outputEvent.getToolName());
-		assertEquals(DEFAULT_DURATION, outputEvent.getDuration());
+		assertEquals(9*1000, outputEvent.getDuration());
 		
 	}
 	
@@ -173,7 +211,51 @@ public class TestInteractionEventConversion
 		assertEquals(21*1000, outputEvent.getDuration()); //This should be 21:09:04 - 21:08:43 == 21 seconds
 	}
 
+	@Test
+	public void testKeyBindingTestTimeoutAndSeveralTools() throws Exception {
+		/* Keybinding commands shouldn't be too long, so if the user hits a key binding, does stuff that doesn't trigger a perspective change
+		 * or other view change until past the KEY_BINDING_TIMEOUT, then the default key binding time should be used.
+		 * 
+		 	[startdate: Wed Oct 16 22:41:51 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.ui.internal.WorkbenchWindow, 
+		 			delta: activated, endDate: Wed Oct 16 22:41:51 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+			[startdate: Wed Oct 16 22:42:06 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.jdt.ui.edit.text.java.open.editor,
+			 		delta: keybinding, endDate: Wed Oct 16 22:42:06 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+			[startdate: Wed Oct 16 22:42:59 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.ui.edit.text.contentAssist.proposals,
+			 		delta: keybinding, endDate: Wed Oct 16 22:42:59 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+			[startdate: Wed Oct 16 22:43:00 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.ui.file.save,
+			 		delta: keybinding, endDate: Wed Oct 16 22:43:00 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+			[startdate: Wed Oct 16 22:43:17 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.ui.file.save,
+			 		delta: keybinding, endDate: Wed Oct 16 22:43:17 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+		 */
+		
+		Date firstDate = humanDateFormat.parse("Wed Oct 16 22:41:51 EDT 2013");
+		Date secondDate = humanDateFormat.parse("Wed Oct 16 22:42:06 EDT 2013");
+		Date thirdDate = humanDateFormat.parse("Wed Oct 16 22:42:59 EDT 2013");
+		Date fourthDate = humanDateFormat.parse("Wed Oct 16 22:43:00 EDT 2013");
+		Date fifthDate = humanDateFormat.parse("Wed Oct 16 22:43:17 EDT 2013");
+		Date shutDownDate = humanDateFormat.parse("Wed Oct 16 22:55:44 EDT 2013");
+		
+		InteractionEvent workbenchWindowEvent = makeWorkbenchWindowEvent(firstDate);
+		InteractionEvent openDeclarationEvent = makeKeyBoardCommandInteractionEvent(ID_OPEN_DECLARATION, secondDate);
+		InteractionEvent contentAssistEvent = makeKeyBoardCommandInteractionEvent("org.eclipse.ui.edit.text.contentAssist.proposals", thirdDate);
+		InteractionEvent saveEvent1 = makeKeyBoardCommandInteractionEvent("org.eclipse.ui.file.save", fourthDate);
+		InteractionEvent saveEvent2 = makeKeyBoardCommandInteractionEvent("org.eclipse.ui.file.save", fifthDate);	
+		
+		converter.foundInteractionEvents(workbenchWindowEvent,openDeclarationEvent,contentAssistEvent,saveEvent1,saveEvent2);
+		
+		converter.isShuttingDown(shutDownDate);
+		
+		List<ToolEvent> outputEvents = converter.getConvertedEvents();
 
+		assertNotNull(outputEvents);
+		assertEquals(4, outputEvents.size());
+
+		ToolEvent outputEvent = outputEvents.get(0);
+		assertEquals(F3, outputEvent.getToolKeyPresses());
+		assertEquals(NAME_OPEN_DECLARATION, outputEvent.getToolName());
+		assertEquals(1*1000, outputEvent.getDuration()); //This would have been 22:42:59 - 22:42:06 = 53, but that is more than the 
+														 //timeout for a keybinding, so it goes to defaul
+	}
 
 
 }

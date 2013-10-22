@@ -127,4 +127,10 @@ public class InteractionEventConvertor
 		return retVal;
 	}
 
+	public void isShuttingDown(Date shutDownDate) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

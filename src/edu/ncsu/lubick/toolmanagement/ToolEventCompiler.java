@@ -76,6 +76,7 @@ public class ToolEventCompiler
 
 	public void isShuttingDown() 
 	{
+		interactionEventConvertor.isShuttingDown(new Date());
 		diskWriter.isShuttingDown();
 		fileLogger.info("Eclipse is shutting down "+new Date());
 	}

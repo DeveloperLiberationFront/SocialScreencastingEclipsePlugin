@@ -39,7 +39,8 @@ public class MockInteractionEventHandler
 	static final String NAME_INTRODUCE_PARAMETER_OBJECT = "Introduce Parameter Object";
 	
 	//misc
-	static final int DEFAULT_DURATION = 15000;
+	static final int DEFAULT_KEYBINDING_DURATION = 15000;
+	static final int DEFAULT_MENU_DURATION = 15000;
 	static final String DELTA_KEYBINDING = "keybinding";
 	static final String DELTA_MENU = "menu";
 	static final String DELTA_ACTIVATED = "activated";
@@ -62,7 +63,7 @@ public class MockInteractionEventHandler
 		return ie;
 	}
 
-	private static InteractionEvent makeMockInteractionEvent(Kind kindOfCommand, String commandId, String deltaType, Date startDate, Date endDate) 
+	static InteractionEvent makeMockInteractionEvent(Kind kindOfCommand, String commandId, String deltaType, Date startDate, Date endDate) 
 	{
 		//could be mock(InteractionEvent), but this is more "lifelike"
 		return new InteractionEvent(kindOfCommand, null, null, commandId, null, deltaType, 1.0f, startDate, endDate);

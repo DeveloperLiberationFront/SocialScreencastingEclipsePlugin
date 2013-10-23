@@ -1,7 +1,5 @@
 package edu.ncsu.lubick.util;
 
-import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.ui.commands.ICommandService;
 
 public class CommandNameDirectory 
 {

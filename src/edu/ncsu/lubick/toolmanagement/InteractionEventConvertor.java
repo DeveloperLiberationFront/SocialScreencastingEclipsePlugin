@@ -88,6 +88,14 @@ public class InteractionEventConvertor
 		System.out.println(this.loggingPrefix + behavior);
 	}
 
+	/*
+	 * Define "Action" events to be events that have deltas of "keybinding" and "menu".
+	 * First, we detect an action event.  (This is done by either seeing a keybinding event, or a menu and then a keybinding event)
+	 * Next, we want to detect the duration to that event.  We will ignore any non-action events prior to the threshold for
+	 * the respective type (it we see an action event, cut the duration right there).  
+	 * Then, we wait for either an action or non-action event, or the shut down procedure.  If the time elapsed is greater
+	 * than the max for the respective type, set it to default, else set it to elapsed time.
+	 */
 	public void foundInteractionEvents(InteractionEvent... events) {
 		//we only handle these types of events
 		for(InteractionEvent event:events)

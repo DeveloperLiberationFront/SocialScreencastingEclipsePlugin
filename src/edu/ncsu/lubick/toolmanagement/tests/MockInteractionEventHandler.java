@@ -85,10 +85,10 @@ public class MockInteractionEventHandler
 	{
 		IBindingService service = mock(IBindingService.class);
 		addKeyBinding(service,ID_CONTENT_ASSIST,CTRL_SPACE);
-		addKeyBinding(service, ID_OPEN_CALL_HIERARCHY, MENU_KEYBINDING);
+		//addKeyBinding(service, ID_OPEN_CALL_HIERARCHY, MENU_KEYBINDING);
 		addKeyBinding(service, ID_OPEN_DECLARATION, F3);
 		addKeyBinding(service, ID_RENAME_REFACTOR, ALT_SHIFT_R);
-		addKeyBinding(service, ID_INTRODUCE_PARAMETER_OBJECT, MENU_KEYBINDING);
+
 		return service;
 	}
 
@@ -109,6 +109,8 @@ public class MockInteractionEventHandler
 		addCommandNamePair(service, ID_OPEN_DECLARATION, NAME_OPEN_DECLARATION);
 		addCommandNamePair(service, ID_RENAME_REFACTOR, NAME_RENAME_REFACTOR);
 		addCommandNamePair(service, ID_INTRODUCE_PARAMETER_OBJECT, NAME_INTRODUCE_PARAMETER_OBJECT);
+		addCommandNamePair(service, ID_RUN_JUNIT_TESTS, NAME_RUN_JUNIT_TESTS);
+		addCommandNamePair(service, ID_SAVE, NAME_SAVE);
 		return service;
 	}
 

@@ -57,6 +57,12 @@ public class MockInteractionEventHandler
 	
 	private MockInteractionEventHandler() {}
 	
+	static InteractionEvent makeMockInteractionEvent(Kind kindOfCommand, String commandId, String deltaType, Date startDate, Date endDate) 
+	{
+		//could be mock(InteractionEvent), but this is more "lifelike"
+		return new InteractionEvent(kindOfCommand, null, null, commandId, null, deltaType, 1.0f, startDate, endDate);
+	}
+
 	static InteractionEvent makeMenuCommandInteractionEvent(String informalCommandName, Date startDate, Date endDate) 
 	{
 		InteractionEvent ie = makeMockInteractionEvent(Kind.COMMAND, informalCommandName, DELTA_MENU, startDate, endDate);
@@ -73,12 +79,6 @@ public class MockInteractionEventHandler
 	{	
 		InteractionEvent ie = makeMockInteractionEvent(Kind.COMMAND, commandId, DELTA_KEYBINDING, startAndEndDate, startAndEndDate);
 		return ie;
-	}
-
-	static InteractionEvent makeMockInteractionEvent(Kind kindOfCommand, String commandId, String deltaType, Date startDate, Date endDate) 
-	{
-		//could be mock(InteractionEvent), but this is more "lifelike"
-		return new InteractionEvent(kindOfCommand, null, null, commandId, null, deltaType, 1.0f, startDate, endDate);
 	}
 
 	static IBindingService makeMockedKeyBindingService() 

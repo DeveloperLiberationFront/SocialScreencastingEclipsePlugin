@@ -7,7 +7,11 @@ import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.KeyBindingDirectory;
 
-public class MylynInteractionListener implements IInteractionEventListener {
+public class MylynInteractionListener implements IInteractionEventListener 
+{
+
+	public static final String MYLYN_MENU = "menu";
+	public static final String MYLYN_KEYBINDING = "keybinding";
 
 
 	private ToolEventCompiler toolHandler;

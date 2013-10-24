@@ -1,5 +1,8 @@
 package edu.ncsu.lubick.toolmanagement;
 
+import static edu.ncsu.lubick.plugin.MylynInteractionListener.*;
+import static edu.ncsu.lubick.toolmanagement.InteractionEventConvertor.*;	//allows the inner classes to use the constants without a prefix
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,13 +19,17 @@ import edu.ncsu.lubick.util.KeyBindingDirectory;
  * @author KevinLubick
  *
  */
-public class InteractionEventConvertor 
+public class InteractionEventConvertor implements InteractionEventConversionStateContext
 {
 
-	private static final String MYLYN_MENU = "menu";
-	private static final String MYLYN_KEYBINDING = "keybinding";
-
-
+	public static final String MENU_KEYBINDING = "MENU";
+	public static final int MAX_MENU_DURATION = 60000;
+	public static final int DEFAULT_MENU_DURATION = 20000;
+	public static final int THRESHOLD_MENU_DURATION = 3000;
+	public static final int MAX_KEYBINDING_DURATION = 15000;
+	public static final int DEFAULT_KEYBINDING_DURATION = 5000;
+	public static final int THRESHOLD_KEYBINDING_DURATION = 2000;
+	
 	private boolean wasMenuEventPreviously = false;
 	private Date previousTimeStamp = null;
 	private Logger loggerForProblems;
@@ -30,13 +37,18 @@ public class InteractionEventConvertor
 	private List<ToolEvent> convertedEvents = new ArrayList<>();
 
 
+	
+
+
+
 	public InteractionEventConvertor() {
-		this.loggerForProblems = Logger.getRootLogger();	//dummy value to avoid NPEs
+		this(Logger.getRootLogger());	//dummy value to avoid NPEs
 	}
 
 	public InteractionEventConvertor(Logger loggerForProblems) 
 	{
 		this.loggerForProblems = loggerForProblems;
+		InteractionEventConversionState.setStateContext(this);
 
 	}
 
@@ -52,7 +64,7 @@ public class InteractionEventConvertor
 
 		previousTimeStamp = event.getDate();
 
-		String keyPresses = "MENU";
+		String keyPresses = MENU_KEYBINDING;
 		if (event.getDelta().equals(MYLYN_KEYBINDING) && !checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(event))
 		{
 			keyPresses = KeyBindingDirectory.lookUpKeyBinding(event.getOriginId());
@@ -67,7 +79,7 @@ public class InteractionEventConvertor
 		String toolName = CommandNameDirectory.lookUpCommandName(event.getOriginId());
 
 		ToolEvent retVal = new ToolEvent(toolName, "", keyPresses, event.getDate(), 15000);
-
+		
 		return retVal;
 	}
 
@@ -82,7 +94,7 @@ public class InteractionEventConvertor
 		return false;
 	}
 
-	private void logUnusualBehavior(String behavior)
+	public void logUnusualBehavior(String behavior)
 	{
 		loggerForProblems.info(this.loggingPrefix + behavior);
 		System.out.println(this.loggingPrefix + behavior);
@@ -108,7 +120,7 @@ public class InteractionEventConvertor
 
 			previousTimeStamp = event.getDate();
 
-			String keyPresses = "MENU";
+			String keyPresses = MENU_KEYBINDING;
 			if (event.getDelta().equals(MYLYN_KEYBINDING) && !checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(event))
 			{
 				keyPresses = KeyBindingDirectory.lookUpKeyBinding(event.getOriginId());
@@ -138,7 +150,127 @@ public class InteractionEventConvertor
 	public void isShuttingDown(Date shutDownDate) 
 	{
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setState(InteractionEventConversionState newState) {
+		// TODO Auto-generated method stub
 		
+	}
+
+}
+
+class DefaultState extends InteractionEventConversionState
+{
+
+	@Override
+	public void sawInteractionEvent(InteractionEvent event) 
+	{
+		if (!isRelevantEvent(event))
+		{
+			return;
+		}
+
+		if (isKeyBindingEvent(event))
+		{
+			DurationDetectionState dds = makeDurationDetectionStateForEvent(event);
+			dds.setIsKeybindingEvent(true);
+			setState(dds);
+
+		} 
+		else if (isMenuEvent(event))
+		{
+			ExpectingKeyBindingState ekbs = new ExpectingKeyBindingState(event.getDate());
+			setState(ekbs);
+		}
+
+	}
+
+	private boolean isRelevantEvent(InteractionEvent event) {
+		return isKeyBindingEvent(event) || isMenuEvent(event);
+	}
+
+
+}
+
+class ExpectingKeyBindingState extends InteractionEventConversionState 
+{
+
+	private Date dateOfPreviousEvent;
+
+	public ExpectingKeyBindingState(Date dateOfMenuEvent) 
+	{
+		this.dateOfPreviousEvent = dateOfMenuEvent;
+	}
+
+	@Override
+	public void sawInteractionEvent(InteractionEvent event) {
+		if (isMenuEvent(event))
+		{
+			logUnusualBehavior("Two menu events in a row?");
+			setState(new DefaultState());
+		} 
+		else if (isKeyBindingEvent(event)) 
+		{
+			if (!dateOfPreviousEvent.equals(event.getDate()))
+			{
+				logUnusualBehavior("Time was different between menu event and keybinding event");
+				//continue with flow, just to see what happens
+			}
+			DurationDetectionState dds = makeDurationDetectionStateForEvent(event);
+			dds.setIsKeybindingEvent(false);
+			setState(dds);
+		}
+		else {
+			if (dateOfPreviousEvent.equals(event.getDate()))
+			{
+				logUnusualBehavior("Probably nothing, but "+makePrintable(event)+" was seen after a menu event, but before a keybinding event.  The time is okay, so, again, probably nothing.");
+			}
+			else 
+			{
+				logUnusualBehavior(makePrintable(event)+" was seen after a menu event, but before a keybinding event.");
+				setState(new DefaultState());
+			}
+		}
+	}
+
+
+}
+
+class DurationDetectionState extends InteractionEventConversionState 
+{
+
+	//default values
+	private Date eventStartDate = null;
+	private String eventCommandName = "";
+	private String eventCommandClass = "";
+	private String eventKeyPress = MENU_KEYBINDING;
+	private boolean isKeyBindingEvent = false;
+
+	@Override
+	public void sawInteractionEvent(InteractionEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setCurrentEventsStartDate(Date date) {
+		this.eventStartDate = date;
+		
+	}
+
+	public void setCurrentEventsCommandName(String commandName) {
+		this.eventCommandName = commandName;
+		
+	}
+
+	public void setCurrentEventsKeypresses(String keyBinding) {
+		this.eventKeyPress = keyBinding;
+	}
+	
+	public void setIsKeybindingEvent(boolean wasKeyBindingEvent)
+	{
+		this.isKeyBindingEvent = wasKeyBindingEvent;
 	}
 
 }

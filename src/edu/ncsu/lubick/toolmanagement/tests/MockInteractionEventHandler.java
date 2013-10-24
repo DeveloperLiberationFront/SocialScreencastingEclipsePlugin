@@ -19,7 +19,6 @@ public class MockInteractionEventHandler
 	static final String MENU_RUN_JUNIT_TESTS = "org.eclipse.debug.internal.ui.actions.LaunchShortcutAction";
 
 	//Keybindings
-	static final String MENU_KEYBINDING = "MENU";	//not a keybinding, but this is what the local hub will be expecting for menu actions
 	static final String CTRL_SPACE = "Ctrl+Space";
 	static final String F3 = "F3";
 	static final String ALT_SHIFT_R = "Alt+Shift+R";
@@ -42,14 +41,6 @@ public class MockInteractionEventHandler
 	static final String NAME_INTRODUCE_PARAMETER_OBJECT = "Introduce Parameter Object";
 	static final String NAME_SAVE = "Save";
 	static final String NAME_RUN_JUNIT_TESTS = "Run JUnit Test";
-	
-	//misc
-	static final int THRESHOLD_KEYBINDING_DURATION = 2000;
-	static final int DEFAULT_KEYBINDING_DURATION = 5000;
-	static final int MAX_KEYBINDING_DURATION = 15000;
-	static final int THRESHOLD_MENU_DURATION = 3000;
-	static final int DEFAULT_MENU_DURATION = 20000;
-	static final int MAX_MENU_DURATION = 60000;
 	
 	static final String DELTA_KEYBINDING = "keybinding";
 	static final String DELTA_MENU = "menu";

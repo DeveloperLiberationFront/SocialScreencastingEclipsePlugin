@@ -1,6 +1,7 @@
 package edu.ncsu.lubick.toolmanagement.tests;
 
 import static edu.ncsu.lubick.toolmanagement.tests.MockInteractionEventHandler.*;
+import static edu.ncsu.lubick.toolmanagement.InteractionEventConvertor.*;
 import static org.junit.Assert.*;
 
 import java.text.DateFormat;
@@ -40,12 +41,6 @@ public class TestInteractionEventConversion
 	}
 
 	@Test
-	public void testTestingEnvironment()
-	{
-		assertTrue(true);
-	}
-
-	@Test
 	public void testBasicKeystrokeConversion() throws Exception
 	{
 		Date firstDate = new Date(0);
@@ -73,7 +68,7 @@ public class TestInteractionEventConversion
 
 	@Test
 	public void testMenuOpenCallHierarchyConversion() throws Exception 
-	{//org.eclipse.jdt.ui.edit.text.java.open.call.hierarchy
+	{
 		//Open Call Hierarchy
 		//Eclipse generates two events for menu operations : a menu one and then a keyboard one that matches what was done.
 		//This emulates that behavior, with some additional events that are a direct cause of the tool (not related to the user) and then 
@@ -139,8 +134,8 @@ public class TestInteractionEventConversion
 	public void testDoubleKeystrokeConversionWithWindowNoise() throws Exception 
 	{
 		/*  This test emulates this course of action
-		 * 	[startdate: Wed Oct 16 21:12:47 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.ui.internal.WorkbenchWindow,
-		 * 			delta: activated, endDate: Wed Oct 16 21:12:47 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
+		  	[startdate: Wed Oct 16 21:12:47 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.ui.internal.WorkbenchWindow,
+		  			delta: activated, endDate: Wed Oct 16 21:12:47 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
 			[startdate: Wed Oct 16 21:12:57 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.jdt.ui.edit.text.java.open.editor,
 			 		delta: keybinding, endDate: Wed Oct 16 21:12:57 EDT 2013, navigation: null, interestContribution: 1.0, StructureKind: null, StructureHandle: null]
 			[startdate: Wed Oct 16 21:13:00 EDT 2013, kind: command, sourceHandle: null, origin: org.eclipse.jdt.ui.edit.text.java.rename.element,

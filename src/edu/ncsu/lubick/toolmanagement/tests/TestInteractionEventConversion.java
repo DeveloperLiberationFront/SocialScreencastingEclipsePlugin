@@ -57,7 +57,11 @@ public class TestInteractionEventConversion
 		
 		converter.isShuttingDown(new Date(60*1000));
 		
+		outputEvents = converter.getConvertedEvents();
 
+		assertNotNull(outputEvents);
+		assertEquals(1, outputEvents.size());
+		
 		ToolEvent outputEvent = outputEvents.get(0);
 		assertEquals(CTRL_SPACE, outputEvent.getToolKeyPresses());
 		assertEquals(NAME_CONTENT_ASSIST, outputEvent.getToolName());

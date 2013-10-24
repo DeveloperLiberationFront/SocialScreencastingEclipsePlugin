@@ -2,6 +2,8 @@ package edu.ncsu.lubick.toolmanagement;
 
 import static edu.ncsu.lubick.plugin.MylynInteractionListener.*;
 
+import java.util.Date;
+
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
 
 import edu.ncsu.lubick.util.CommandNameDirectory;
@@ -11,12 +13,16 @@ public abstract class InteractionEventConversionState
 {
 	private static InteractionEventConversionStateContext stateContext;
 
-	public abstract void sawInteractionEvent(InteractionEvent event);
-
 	public static void setStateContext(InteractionEventConversionStateContext newStateContext) {
 		stateContext = newStateContext;
 	}
+
+	public abstract void sawInteractionEvent(InteractionEvent event);
+
+	public abstract void isShuttingDown(Date shutdowndate);
 	
+	
+	//shared behavior
 	protected void setState(InteractionEventConversionState newState)
 	{
 		stateContext.setState(newState);
@@ -27,6 +33,12 @@ public abstract class InteractionEventConversionState
 		stateContext.logUnusualBehavior(behavior);
 	}
 
+	protected void postConvertedEvent(ToolEvent createdEvent) 
+	{
+		stateContext.postConvertedEvent(createdEvent);
+		
+	}
+
 	protected boolean isKeyBindingEvent(InteractionEvent event) {
 		return event.getDelta().equals(MYLYN_KEYBINDING);
 	}
@@ -35,13 +47,24 @@ public abstract class InteractionEventConversionState
 		return event.getDelta().equals(MYLYN_MENU);
 	}
 
-	protected DurationDetectionState makeDurationDetectionStateForEvent(InteractionEvent event) {
-		DurationDetectionState dds = new DurationDetectionState();
+	protected DurationDetectionState makeDurationDetectionStateForKeyBindingEvent(InteractionEvent event) {
+		DurationDetectionState dds = makeDurationDetectionStateForMenuEvent(event);
 		
 		dds.setCurrentEventsKeypresses(KeyBindingDirectory.lookUpKeyBinding(event.getOriginId()));
+		
+		return dds;
+	}
+	
+	protected DurationDetectionState makeDurationDetectionStateForMenuEvent(InteractionEvent event) {
+		DurationDetectionState dds = new DurationDetectionState();
+		
 		dds.setCurrentEventsCommandName(CommandNameDirectory.lookUpCommandName(event.getOriginId()));
 		dds.setCurrentEventsStartDate(event.getDate());
 		
 		return dds;
+	}
+
+	protected boolean wasActionEvent(InteractionEvent event) {
+		return isKeyBindingEvent(event) || isMenuEvent(event);
 	}
 }

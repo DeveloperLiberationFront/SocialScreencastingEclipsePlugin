@@ -79,7 +79,7 @@ public class MockInteractionEventHandler
 		//addKeyBinding(service, ID_OPEN_CALL_HIERARCHY, MENU_KEYBINDING);
 		addKeyBinding(service, ID_OPEN_DECLARATION, F3);
 		addKeyBinding(service, ID_RENAME_REFACTOR, ALT_SHIFT_R);
-
+		addKeyBinding(service, ID_SAVE, CTRL_S);
 		return service;
 	}
 

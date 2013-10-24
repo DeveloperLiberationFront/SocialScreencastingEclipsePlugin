@@ -29,17 +29,14 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 	public static final int MAX_KEYBINDING_DURATION = 15000;
 	public static final int DEFAULT_KEYBINDING_DURATION = 5000;
 	public static final int THRESHOLD_KEYBINDING_DURATION = 2000;
-	
+
 	private boolean wasMenuEventPreviously = false;
 	private Date previousTimeStamp = null;
 	private Logger loggerForProblems;
 	private final String loggingPrefix = "["+getClass()+"]";
 	private List<ToolEvent> convertedEvents = new ArrayList<>();
 
-
-	
-
-
+	private InteractionEventConversionState currentState = new DefaultState();
 
 	public InteractionEventConvertor() {
 		this(Logger.getRootLogger());	//dummy value to avoid NPEs
@@ -79,7 +76,7 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 		String toolName = CommandNameDirectory.lookUpCommandName(event.getOriginId());
 
 		ToolEvent retVal = new ToolEvent(toolName, "", keyPresses, event.getDate(), 15000);
-		
+
 		return retVal;
 	}
 
@@ -112,33 +109,12 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 		//we only handle these types of events
 		for(InteractionEvent event:events)
 		{
-			if (!event.getDelta().equals(MYLYN_KEYBINDING) && !event.getDelta().equals(MYLYN_MENU))
-			{
-				continue;
-			}
-
-
-			previousTimeStamp = event.getDate();
-
-			String keyPresses = MENU_KEYBINDING;
-			if (event.getDelta().equals(MYLYN_KEYBINDING) && !checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(event))
-			{
-				keyPresses = KeyBindingDirectory.lookUpKeyBinding(event.getOriginId());
-			}
-			if (event.getDelta().equals(MYLYN_MENU))
-			{
-				wasMenuEventPreviously = true;
-				continue;		//we'll wait until next time
-			}
-
-			wasMenuEventPreviously = false;
-			String toolName = CommandNameDirectory.lookUpCommandName(event.getOriginId());
-
-			ToolEvent madeEvent = new ToolEvent(toolName, "", keyPresses, event.getDate(), 15000);
-
-			convertedEvents.add(madeEvent);
+			System.out.println(makePrintable(event));
+			currentState.sawInteractionEvent(event);
 		}
 	}
+	
+	
 
 	public List<ToolEvent> getConvertedEvents() 
 	{
@@ -149,14 +125,19 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 
 	public void isShuttingDown(Date shutDownDate) 
 	{
-		// TODO Auto-generated method stub
-
+		currentState.isShuttingDown(shutDownDate);
 	}
 
 	@Override
 	public void setState(InteractionEventConversionState newState) {
-		// TODO Auto-generated method stub
-		
+		this.currentState = newState;
+
+	}
+
+	@Override
+	public void postConvertedEvent(ToolEvent createdEvent) {
+		this.convertedEvents.add(createdEvent);
+
 	}
 
 }
@@ -174,7 +155,7 @@ class DefaultState extends InteractionEventConversionState
 
 		if (isKeyBindingEvent(event))
 		{
-			DurationDetectionState dds = makeDurationDetectionStateForEvent(event);
+			DurationDetectionState dds = makeDurationDetectionStateForKeyBindingEvent(event);
 			dds.setIsKeybindingEvent(true);
 			setState(dds);
 
@@ -184,12 +165,20 @@ class DefaultState extends InteractionEventConversionState
 			ExpectingKeyBindingState ekbs = new ExpectingKeyBindingState(event.getDate());
 			setState(ekbs);
 		}
+		logUnusualBehavior("Ignored a \"relevant\" event in DefaultState");
 
 	}
 
 	private boolean isRelevantEvent(InteractionEvent event) {
-		return isKeyBindingEvent(event) || isMenuEvent(event);
+		return wasActionEvent(event);
 	}
+
+	@Override
+	public void isShuttingDown(Date shutdowndate) {//this state is perfectly okay to just shut down quietly
+
+	}
+
+
 
 
 }
@@ -218,7 +207,7 @@ class ExpectingKeyBindingState extends InteractionEventConversionState
 				logUnusualBehavior("Time was different between menu event and keybinding event");
 				//continue with flow, just to see what happens
 			}
-			DurationDetectionState dds = makeDurationDetectionStateForEvent(event);
+			DurationDetectionState dds = makeDurationDetectionStateForMenuEvent(event);
 			dds.setIsKeybindingEvent(false);
 			setState(dds);
 		}
@@ -235,6 +224,11 @@ class ExpectingKeyBindingState extends InteractionEventConversionState
 		}
 	}
 
+	@Override
+	public void isShuttingDown(Date shutdowndate) {
+		logUnusualBehavior("Was in the middle of a menu event when received shutdown");
+	}
+
 
 }
 
@@ -246,31 +240,97 @@ class DurationDetectionState extends InteractionEventConversionState
 	private String eventCommandName = "";
 	private String eventCommandClass = "";
 	private String eventKeyPress = MENU_KEYBINDING;
-	private boolean isKeyBindingEvent = false;
+
+	private int minThreshold = THRESHOLD_MENU_DURATION;
+	private int defaultLength = DEFAULT_MENU_DURATION;
+	private int maxThreshold = MAX_MENU_DURATION;
 
 	@Override
-	public void sawInteractionEvent(InteractionEvent event) {
-		// TODO Auto-generated method stub
+	public void sawInteractionEvent(InteractionEvent event) 
+	{
+		ToolEvent createdEvent = null;
+		
+		if (wasActionEvent(event))
+		{
+			createdEvent = makeToolEventEndingAtThisDate(event.getDate());
+			postConvertedEvent(createdEvent);
+			DefaultState newState = new DefaultState();
+			setState(newState);
+			newState.sawInteractionEvent(event);
+		}
+		else
+		{
+			if (currentDurationWouldBeTooShort(event.getDate()))
+			{
+				return;
+			}
+			createdEvent = makeToolEventEndingAtThisDate(event.getDate());
+			postConvertedEvent(createdEvent);
+			setState(new DefaultState());
+		}
+		
+	}
 
+	private ToolEvent makeToolEventEndingAtThisDate(Date date) {
+		ToolEvent createdEvent = null;
+		if (currentDurationWouldBeTooLong(date))
+		{
+			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, eventStartDate, defaultLength);
+		}
+		else
+		{
+			int duration = (int) getElapsedTime(date);
+			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, eventStartDate, duration);
+		}
+		return createdEvent;
+	}
+
+	private boolean currentDurationWouldBeTooShort(Date date) {
+		return getElapsedTime(date) <= minThreshold;
+	}
+
+	private boolean currentDurationWouldBeTooLong(Date date) {
+		return getElapsedTime(date) > maxThreshold;
+	}
+
+	private long getElapsedTime(Date thisOtherDate) {
+		return thisOtherDate.getTime() - eventStartDate.getTime();
 	}
 
 	public void setCurrentEventsStartDate(Date date) {
 		this.eventStartDate = date;
-		
+
 	}
 
 	public void setCurrentEventsCommandName(String commandName) {
 		this.eventCommandName = commandName;
-		
+
 	}
 
 	public void setCurrentEventsKeypresses(String keyBinding) {
 		this.eventKeyPress = keyBinding;
 	}
-	
+
 	public void setIsKeybindingEvent(boolean wasKeyBindingEvent)
 	{
-		this.isKeyBindingEvent = wasKeyBindingEvent;
+		if (wasKeyBindingEvent)
+		{
+			minThreshold = THRESHOLD_KEYBINDING_DURATION;
+			defaultLength = DEFAULT_KEYBINDING_DURATION;
+			maxThreshold = MAX_KEYBINDING_DURATION;
+		}
+		else 
+		{
+			minThreshold = THRESHOLD_MENU_DURATION;
+			defaultLength = DEFAULT_MENU_DURATION;
+			maxThreshold = MAX_MENU_DURATION;
+		}
+	}
+
+	@Override
+	public void isShuttingDown(Date shutdowndate) {
+		ToolEvent lastEvent = makeToolEventEndingAtThisDate(shutdowndate);
+		postConvertedEvent(lastEvent);
 	}
 
 }

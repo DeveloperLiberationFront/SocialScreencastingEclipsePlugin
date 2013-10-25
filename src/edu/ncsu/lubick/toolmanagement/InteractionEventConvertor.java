@@ -23,6 +23,7 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 {
 
 	public static final String MENU_KEYBINDING = "MENU";
+	
 	public static final int MAX_MENU_DURATION = 60000;
 	public static final int DEFAULT_MENU_DURATION = 20000;
 	public static final int THRESHOLD_MENU_DURATION = 3000;

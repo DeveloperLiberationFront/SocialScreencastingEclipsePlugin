@@ -3,6 +3,7 @@ package edu.ncsu.lubick.toolmanagement;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
@@ -58,25 +59,31 @@ public class ToolEventCompiler
 	{
 		fileLogger.info(MylynInteractionListener.makePrintable(iEvent));
 		
-		ToolEvent toolEvent = interactionEventConvertor.convert(iEvent);
-		handleToolEvent(toolEvent);
+		interactionEventConvertor.foundInteractionEvents(iEvent);
+		
+		List<ToolEvent> results = interactionEventConvertor.getConvertedEvents();
+		
+		handleToolEvents(results);
 		
 	}
 
-	private void handleToolEvent(ToolEvent toolEvent) 
+	private void handleToolEvents(List<ToolEvent> toolEvents) 
 	{
-		if (toolEvent == null)
+		for (ToolEvent te: toolEvents)
 		{
-			fileLogger.debug("Choosing not to write previous command to disk");
-			return;
+			diskWriter.storeEvent(te);
 		}
-		diskWriter.storeEvent(toolEvent);
 		
 	}
 
 	public void isShuttingDown() 
 	{
 		interactionEventConvertor.isShuttingDown(new Date());
+		
+		List<ToolEvent> results = interactionEventConvertor.getConvertedEvents();
+		
+		handleToolEvents(results);
+		
 		diskWriter.isShuttingDown();
 		fileLogger.info("Eclipse is shutting down "+new Date());
 	}

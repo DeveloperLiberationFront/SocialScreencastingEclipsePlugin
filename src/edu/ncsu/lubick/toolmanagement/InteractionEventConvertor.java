@@ -165,7 +165,10 @@ class DefaultState extends InteractionEventConversionState
 			ExpectingKeyBindingState ekbs = new ExpectingKeyBindingState(event.getDate());
 			setState(ekbs);
 		}
-		logUnusualBehavior("Ignored a \"relevant\" event in DefaultState");
+		else
+		{
+			logUnusualBehavior("Possible error: Ignored a \"relevant\" event in DefaultState" + makePrintable(event));
+		}
 
 	}
 

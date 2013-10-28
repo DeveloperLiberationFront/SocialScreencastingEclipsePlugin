@@ -1,14 +1,14 @@
 package edu.ncsu.lubick.toolmanagement.tests;
 
-import static org.mockito.Mockito.*;
-
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
 import org.eclipse.mylyn.monitor.core.InteractionEvent.Kind;
-import org.eclipse.ui.keys.IBindingService;
 
 import edu.ncsu.lubick.util.CommandNameServce;
+import edu.ncsu.lubick.util.KeyBindingService;
 
 public class MockInteractionEventHandler 
 {
@@ -73,9 +73,9 @@ public class MockInteractionEventHandler
 	}
 
 	//TODO mocked objects possibly causing a leak for unit tests
-	static IBindingService makeMockedKeyBindingService() 
+	static KeyBindingService makeMockedKeyBindingService() 
 	{
-		IBindingService service = mock(IBindingService.class);
+		KeyBindingService service = new MockKeyBindingService();
 		addKeyBinding(service,ID_CONTENT_ASSIST,CTRL_SPACE);
 		//addKeyBinding(service, ID_OPEN_CALL_HIERARCHY, MENU_KEYBINDING);
 		addKeyBinding(service, ID_OPEN_DECLARATION, F3);
@@ -89,14 +89,15 @@ public class MockInteractionEventHandler
 		return makeMockInteractionEvent(Kind.COMMAND, "org.eclipse.ui.internal.WorkbenchWindow", DELTA_ACTIVATED, startAndEndDate, startAndEndDate);
 	}
 
-	private static void addKeyBinding(IBindingService service, String commandId, String keyBinding) {
-		when(service.getBestActiveBindingFormattedFor(commandId)).thenReturn(keyBinding);
+	private static void addKeyBinding(KeyBindingService service, String commandId, String keyBinding) {
+		//when(service.getBestActiveBindingFormattedFor(commandId)).thenReturn(keyBinding);
+		((MockKeyBindingService) service).addPair(commandId,keyBinding);
 	}
 
 	//TODO mocked objects possibly causing a leak for unit tests
 	static CommandNameServce makeMockedCommandService() 
 	{
-		CommandNameServce service = mock(CommandNameServce.class);
+		CommandNameServce service = new MockCommandNameServce();
 		addCommandNamePair(service, ID_CONTENT_ASSIST, NAME_CONTENT_ASSIST);
 		addCommandNamePair(service, ID_OPEN_CALL_HIERARCHY, NAME_OPEN_CALL_HIERARCHY);
 		addCommandNamePair(service, ID_OPEN_DECLARATION, NAME_OPEN_DECLARATION);
@@ -108,6 +109,41 @@ public class MockInteractionEventHandler
 	}
 
 	private static void addCommandNamePair(CommandNameServce service, String commandId, String commandName) {
-		when(service.lookUpCommandName(commandId)).thenReturn(commandName);
+		//when(service.lookUpCommandName(commandId)).thenReturn(commandName);
+		((MockCommandNameServce) service).addPair(commandId, commandName);
 	}
+}
+
+class MockKeyBindingService implements KeyBindingService
+{
+	private Map<String, String> keyMap = new HashMap<String, String>();
+	
+	@Override
+	public String getKeyBindingFor(String commandId) 
+	{
+		return keyMap.get(commandId);
+	}
+	
+	public void addPair(String commandId, String commandName) {
+		this.keyMap.put(commandId, commandName);
+		
+	}
+	
+}
+
+class MockCommandNameServce implements CommandNameServce
+{
+
+	private Map<String, String> commandMap = new HashMap<String, String>();
+
+	@Override
+	public String lookUpCommandName(String originId) {
+		return commandMap.get(originId);
+	}
+
+	public void addPair(String commandId, String commandName) {
+		this.commandMap.put(commandId, commandName);
+		
+	}
+	
 }

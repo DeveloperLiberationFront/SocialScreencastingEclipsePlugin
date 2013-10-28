@@ -288,12 +288,12 @@ public class TestInteractionEventConversion
 		InteractionEvent saveEvent1 = makeKeyBoardCommandInteractionEvent(ID_SAVE, fourthDate);
 		InteractionEvent saveEvent2 = makeKeyBoardCommandInteractionEvent(ID_SAVE, fifthDate);	
 		
-		for(int i = 0;i<100000;i++)
+		for(int i = 0;i<1000000;i++)
 		{
 			if (i % 1000 == 0)
 			{
-				Runtime.getRuntime().gc();
-				System.out.print('.');
+				//Runtime.getRuntime().gc();
+				//System.out.print('.');
 			}
 			converter.foundInteractionEvents(workbenchWindowEvent,openDeclarationEvent,contentAssistEvent,saveEvent1,saveEvent2);
 			List<ToolEvent> outputEvents = converter.getConvertedEvents();

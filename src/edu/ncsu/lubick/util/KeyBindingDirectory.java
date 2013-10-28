@@ -1,17 +1,16 @@
 package edu.ncsu.lubick.util;
 
-import org.eclipse.ui.keys.IBindingService;
 
 public class KeyBindingDirectory {
 
-	private static IBindingService bindingService = null;
+	private static KeyBindingService bindingService = null;
 
 	public static String lookUpKeyBinding(String commandId) {
-		return bindingService.getBestActiveBindingFormattedFor(commandId);
+		return bindingService.getKeyBindingFor(commandId);
 		
 	}
 	
-	public static void initializeBindingService(IBindingService keyBindingService)
+	public static void initializeBindingService(KeyBindingService keyBindingService)
 	{
 		KeyBindingDirectory.bindingService = keyBindingService;
 	}

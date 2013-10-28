@@ -25,6 +25,7 @@ import org.osgi.framework.BundleContext;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.EclipseCommandNameService;
+import edu.ncsu.lubick.util.EclipseKeyBindingService;
 import edu.ncsu.lubick.util.KeyBindingDirectory;
 
 /**
@@ -159,7 +160,8 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 		setupToolStreamFileLogging();
 		
-		KeyBindingDirectory.initializeBindingService((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class));
+		EclipseKeyBindingService adapter = new EclipseKeyBindingService((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class));
+		KeyBindingDirectory.initializeBindingService(adapter);
 		
 		EclipseCommandNameService commandService = new EclipseCommandNameService((ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class));
 		CommandNameDirectory.initializeCommandService(commandService);

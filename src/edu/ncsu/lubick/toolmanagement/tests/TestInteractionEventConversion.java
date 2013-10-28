@@ -270,6 +270,47 @@ public class TestInteractionEventConversion
 		assertEquals(DEFAULT_KEYBINDING_DURATION, outputEvent.getDuration());
 	}
 	
+	
+	@Test
+	public void testKeyBindingTimeoutAndSeveralTools_stress() throws Exception
+	{
+
+		
+		Date firstDate = humanDateFormat.parse("Wed Oct 16 22:41:51 EDT 2013");
+		Date secondDate = humanDateFormat.parse("Wed Oct 16 22:42:06 EDT 2013");
+		Date thirdDate = humanDateFormat.parse("Wed Oct 16 22:42:59 EDT 2013");
+		Date fourthDate = humanDateFormat.parse("Wed Oct 16 22:43:00 EDT 2013");
+		Date fifthDate = humanDateFormat.parse("Wed Oct 16 22:43:17 EDT 2013");
+		
+		InteractionEvent workbenchWindowEvent = makeWorkbenchWindowEvent(firstDate);
+		InteractionEvent openDeclarationEvent = makeKeyBoardCommandInteractionEvent(ID_OPEN_DECLARATION, secondDate);
+		InteractionEvent contentAssistEvent = makeKeyBoardCommandInteractionEvent(ID_CONTENT_ASSIST, thirdDate);
+		InteractionEvent saveEvent1 = makeKeyBoardCommandInteractionEvent(ID_SAVE, fourthDate);
+		InteractionEvent saveEvent2 = makeKeyBoardCommandInteractionEvent(ID_SAVE, fifthDate);	
+		
+		for(int i = 0;i<100000;i++)
+		{
+			if (i % 1000 == 0)
+			{
+				Runtime.getRuntime().gc();
+				System.out.print('.');
+			}
+			converter.foundInteractionEvents(workbenchWindowEvent,openDeclarationEvent,contentAssistEvent,saveEvent1,saveEvent2);
+			List<ToolEvent> outputEvents = converter.getConvertedEvents();
+			assertTrue(outputEvents.size()>2);
+		}
+
+	}
+	
+	public static void main(String[] args) throws Exception {
+		setUpBeforeClass();
+		TestInteractionEventConversion test = new TestInteractionEventConversion();
+		test.setUp();
+		test.testKeyBindingTimeoutAndSeveralTools_stress();
+		System.out.println("Just dandy");
+	}
+	
+	
 	@Test
 	public void testMenuTimeoutAndThreshold() throws Exception {
 		/*

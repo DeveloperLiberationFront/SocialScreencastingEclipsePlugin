@@ -72,6 +72,7 @@ public class MockInteractionEventHandler
 		return ie;
 	}
 
+	//TODO mocked objects possibly causing a leak for unit tests
 	static IBindingService makeMockedKeyBindingService() 
 	{
 		IBindingService service = mock(IBindingService.class);
@@ -92,6 +93,7 @@ public class MockInteractionEventHandler
 		when(service.getBestActiveBindingFormattedFor(commandId)).thenReturn(keyBinding);
 	}
 
+	//TODO mocked objects possibly causing a leak for unit tests
 	static CommandNameServce makeMockedCommandService() 
 	{
 		CommandNameServce service = mock(CommandNameServce.class);

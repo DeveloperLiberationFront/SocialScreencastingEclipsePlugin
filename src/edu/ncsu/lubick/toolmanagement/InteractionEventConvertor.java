@@ -110,18 +110,25 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 		//we only handle these types of events
 		for(InteractionEvent event:events)
 		{
-			System.out.println(makePrintable(event));
-			currentState.sawInteractionEvent(event);
+			this.reloadPreviousEvent = true;
+			while (reloadPreviousEvent)
+			{
+				reloadPreviousEvent = false;
+				currentState.sawInteractionEvent(event);
+			}
 		}
 	}
 	
-	
+	List<ToolEvent> returnable =new ArrayList<ToolEvent>();
+
+	private boolean reloadPreviousEvent;
 
 	public List<ToolEvent> getConvertedEvents() 
 	{
-		List<ToolEvent> retVal = new ArrayList<ToolEvent>(convertedEvents);
+		returnable.clear();
+		returnable.addAll(convertedEvents);
 		convertedEvents.clear();
-		return retVal;
+		return returnable;
 	}
 
 	public void isShuttingDown(Date shutDownDate) 
@@ -139,6 +146,11 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 	public void postConvertedEvent(ToolEvent createdEvent) {
 		this.convertedEvents.add(createdEvent);
 
+	}
+
+	@Override
+	public void previousEventNeedsRerun(boolean b) {
+		this.reloadPreviousEvent = b;
 	}
 
 }
@@ -260,7 +272,8 @@ class DurationDetectionState extends InteractionEventConversionState
 			postConvertedEvent(createdEvent);
 			DefaultState newState = new DefaultState();
 			setState(newState);
-			newState.sawInteractionEvent(event);
+			//newState.sawInteractionEvent(event);
+			setEventUnHandled(true);
 		}
 		else
 		{
@@ -274,6 +287,7 @@ class DurationDetectionState extends InteractionEventConversionState
 		}
 		
 	}
+
 
 	private ToolEvent makeToolEventEndingAtThisDate(Date date) {
 		ToolEvent createdEvent = null;

@@ -35,8 +35,11 @@ public abstract class InteractionEventConversionState
 
 	protected void postConvertedEvent(ToolEvent createdEvent) 
 	{
-		stateContext.postConvertedEvent(createdEvent);
-		
+		stateContext.postConvertedEvent(createdEvent);	
+	}
+	
+	protected void setEventUnHandled(boolean b) {
+		stateContext.previousEventNeedsRerun(b);		
 	}
 
 	protected boolean isKeyBindingEvent(InteractionEvent event) {

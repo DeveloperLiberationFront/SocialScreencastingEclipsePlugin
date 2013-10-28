@@ -8,4 +8,6 @@ public interface InteractionEventConversionStateContext
 	public void logUnusualBehavior(String behavior);
 
 	public void postConvertedEvent(ToolEvent createdEvent);
+
+	public void previousEventNeedsRerun(boolean b);
 }

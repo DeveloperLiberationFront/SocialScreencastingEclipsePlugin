@@ -103,6 +103,7 @@ public class ToolStreamDiskWriter implements RotatingFileManagerListener, IToolS
 	
 	}
 
+	@Override
 	public void storeEvent(ToolEvent toolEvent) {
 		try 
 		{
@@ -123,6 +124,7 @@ public class ToolStreamDiskWriter implements RotatingFileManagerListener, IToolS
 		return this.dateInSecondsToNumber.format(new Date());
 	}
 
+	@Override
 	public void isShuttingDown() 
 	{
 		try {

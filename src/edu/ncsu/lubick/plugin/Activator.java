@@ -59,6 +59,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -87,6 +88,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (interactionListener != null)
 		{
@@ -133,6 +135,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				//taken from the sample monitoring program.  Probably monitors more than I need
 				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(

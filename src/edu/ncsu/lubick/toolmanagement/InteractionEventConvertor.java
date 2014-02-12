@@ -92,6 +92,7 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 		return false;
 	}
 
+	@Override
 	public void logUnusualBehavior(String behavior)
 	{
 		loggerForProblems.info(this.loggingPrefix + behavior);

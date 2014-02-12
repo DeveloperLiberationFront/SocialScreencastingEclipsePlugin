@@ -1,6 +1,6 @@
 package edu.ncsu.lubick.toolmanagement;
 
-public interface IToolStreamDiskWriter {
+public interface IToolStreamReporter {
 
 	void storeEvent(ToolEvent toolEvent);
 

@@ -23,6 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
+import edu.ncsu.lubick.toolmanagement.ToolStreamDiskWriter;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.EclipseCommandNameService;
 import edu.ncsu.lubick.util.EclipseKeyBindingService;
@@ -69,7 +70,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		
 	}
 
-	private void setupToolStreamFileLogging() {
+	private void setupLog4j() {
 		FileAppender fa = new FileAppender();
 		fa.setName("ToolStreamLogging");
 		fa.setFile("ToolStreamLog.log");
@@ -161,7 +162,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 			System.err.println("SERIOUS PROBLEM!  THE MONITOR FOLDER DOESN'T EXIST");
 		}
 
-		setupToolStreamFileLogging();
+		setupLog4j();
 		
 		EclipseKeyBindingService adapter = new EclipseKeyBindingService((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class));
 		KeyBindingDirectory.initializeBindingService(adapter);
@@ -169,7 +170,9 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		EclipseCommandNameService commandService = new EclipseCommandNameService((ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class));
 		CommandNameDirectory.initializeCommandService(commandService);
 		
-		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler(outputFolder);
+		ToolStreamDiskWriter.setOutputFolder(outputFolder);
+		
+		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler();
 		this.interactionListener = new MylynInteractionListener(toolStreamCompiler);
 		MonitorUi.addInteractionListener(this.interactionListener);
 	}

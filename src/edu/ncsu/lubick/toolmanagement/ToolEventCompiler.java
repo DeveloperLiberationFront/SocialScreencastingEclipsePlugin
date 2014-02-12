@@ -23,7 +23,7 @@ public class ToolEventCompiler
 
 	private static Logger fileLogger;
 
-	private IToolStreamDiskWriter diskWriter;
+	private IToolStreamReporter toolReporter;
 	private InteractionEventConvertor interactionEventConvertor;
 	
 	public static void setLogger(Logger logger) 
@@ -31,7 +31,7 @@ public class ToolEventCompiler
 		fileLogger = logger;
 	}
 	
-	public ToolEventCompiler(File monitorFolder) 
+	public ToolEventCompiler() 
 	{
 		if (fileLogger == null)		//just in case this hasn't been initialized, set a dummy value to avoid NPEs
 		{
@@ -40,18 +40,19 @@ public class ToolEventCompiler
 		fileLogger.info("Eclipse has started up on "+new Date());
 		
 		
-		createDiskWriter(monitorFolder);
+		createToolReporter();
 		this.interactionEventConvertor = new InteractionEventConvertor(fileLogger);
 		
 		
 	}
 
-	private void createDiskWriter(File monitorFolder) {
+	private void createToolReporter() {
 		try {
-			this.diskWriter = new ToolStreamDiskWriter(monitorFolder);
-		} catch (IOException e) {
+			//this.toolReporter = new ToolStreamDiskWriter(monitorFolder);
+			this.toolReporter = new NetworkToolStreamReporter();
+		} catch (Exception e) {
 			e.printStackTrace();
-			diskWriter = new DummyToolStreamDiskWriter();
+			toolReporter = new DummyToolStreamReporter();
 		}
 	}
 
@@ -63,15 +64,15 @@ public class ToolEventCompiler
 		
 		List<ToolEvent> results = interactionEventConvertor.getConvertedEvents();
 		
-		handleToolEvents(results);
+		reportToolEvents(results);
 		
 	}
 
-	private void handleToolEvents(List<ToolEvent> toolEvents) 
+	private void reportToolEvents(List<ToolEvent> toolEvents) 
 	{
 		for (ToolEvent te: toolEvents)
 		{
-			diskWriter.storeEvent(te);
+			toolReporter.storeEvent(te);
 		}
 		
 	}
@@ -82,9 +83,9 @@ public class ToolEventCompiler
 		
 		List<ToolEvent> results = interactionEventConvertor.getConvertedEvents();
 		
-		handleToolEvents(results);
+		reportToolEvents(results);
 		
-		diskWriter.isShuttingDown();
+		toolReporter.isShuttingDown();
 		fileLogger.info("Eclipse is shutting down "+new Date());
 	}
 

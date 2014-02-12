@@ -18,11 +18,11 @@ import edu.ncsu.lubick.util.RotatingFileManagerListener;
  * @author KevinLubick
  *
  */
-public class ToolStreamDiskWriter implements RotatingFileManagerListener, IToolStreamDiskWriter {
+public class ToolStreamDiskWriter implements RotatingFileManagerListener, IToolStreamReporter {
 
 	private static final String TOOLSTREAM_FOLDER_NAME = "Eclipse/";
 	private static final long DELAY_FOR_NEW_FILE_MS = 60*1000;		//every minute
-	private File toolStreamFolder;
+	private static File toolStreamFolder;
 	private SimpleDateFormat dateInSecondsToNumber = new SimpleDateFormat("DDDyykkmmss");	//this is the same as in screencasting hub
 
 	private RotatingFileManager rotatingFileManager;
@@ -30,10 +30,8 @@ public class ToolStreamDiskWriter implements RotatingFileManagerListener, IToolS
 	protected boolean shouldGoToNextFile;
 	private JSONArray jarr = new JSONArray();
 
-	public ToolStreamDiskWriter(File monitorFolder) throws IOException 
+	public ToolStreamDiskWriter() throws IOException 
 	{
-		createOutputFolderInMonitorFolder(monitorFolder);
-
 		makeRotatingFileManager();
 
 		//sets up the timer that regulates when the file should be changed
@@ -41,8 +39,8 @@ public class ToolStreamDiskWriter implements RotatingFileManagerListener, IToolS
 
 	}
 
-	private void createOutputFolderInMonitorFolder(File monitorFolder) {
-		this.toolStreamFolder = new File(monitorFolder,TOOLSTREAM_FOLDER_NAME);
+	private static void createOutputFolderInMonitorFolder(File monitorFolder) {
+		toolStreamFolder = new File(monitorFolder,TOOLSTREAM_FOLDER_NAME);
 		if (!toolStreamFolder.exists())
 		{
 			if (!toolStreamFolder.mkdir())
@@ -134,6 +132,12 @@ public class ToolStreamDiskWriter implements RotatingFileManagerListener, IToolS
 			e.printStackTrace();
 		}
 		rotatingFileManager.stop();
+	}
+
+	public static void setOutputFolder(File outputFolder)
+	{
+		createOutputFolderInMonitorFolder(outputFolder);
+		
 	}
 
 }

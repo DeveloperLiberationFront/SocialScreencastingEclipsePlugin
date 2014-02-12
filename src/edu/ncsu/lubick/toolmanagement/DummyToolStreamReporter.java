@@ -6,7 +6,7 @@ package edu.ncsu.lubick.toolmanagement;
  * @author KevinLubick
  *
  */
-public class DummyToolStreamDiskWriter implements IToolStreamDiskWriter {
+public class DummyToolStreamReporter implements IToolStreamReporter {
 
 	@Override
 	public void storeEvent(ToolEvent toolEvent) {}

@@ -7,9 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -66,7 +64,7 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 
 	protected void reportThisSetOfEvents(JSONArray copy) throws IOException
 	{
-		HttpPost httpPost = new HttpPost("http://targethost/login");
+		HttpPost httpPost = new HttpPost("http://localhost:4443/reportTool");
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("pluginName", "Eclipse"));
 		nvps.add(new BasicNameValuePair("toolUsages", copy.toString()));

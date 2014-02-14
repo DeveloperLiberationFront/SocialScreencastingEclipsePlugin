@@ -13,11 +13,15 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.8.101",
  org.eclipse.jdt.ui;bundle-version="3.9.1",
  org.eclipse.pde.ui;bundle-version="3.8.0",
- org.eclipse.ui.editors;bundle-version="3.8.100"
+ org.eclipse.ui.editors;bundle-version="3.8.100",
+ org.apache.commons.logging;bundle-version="1.1.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.mylyn.internal.monitor.usage,
  org.junit;version="4.11.0"
-Bundle-ClassPath: lib/log4j-1.2.17.jar,
- .,
- lib/java-json.jar
+Bundle-ClassPath: .,
+ lib/log4j-1.2.17.jar,
+ lib/java-json.jar,
+ lib/fluent-hc-4.3.2.jar,
+ lib/httpclient-4.3.2.jar,
+ lib/httpcore-4.3.1.jar

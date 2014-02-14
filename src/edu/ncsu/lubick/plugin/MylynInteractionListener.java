@@ -1,5 +1,6 @@
 package edu.ncsu.lubick.plugin;
 
+import org.apache.log4j.Logger;
 import org.eclipse.mylyn.monitor.core.IInteractionEventListener;
 import org.eclipse.mylyn.monitor.core.InteractionEvent;
 
@@ -12,6 +13,7 @@ public class MylynInteractionListener implements IInteractionEventListener
 
 	public static final String MYLYN_MENU = "menu";
 	public static final String MYLYN_KEYBINDING = "keybinding";
+	private static Logger logger;
 
 
 	private ToolEventCompiler toolHandler;
@@ -20,17 +22,18 @@ public class MylynInteractionListener implements IInteractionEventListener
 	public MylynInteractionListener(ToolEventCompiler compiler) 
 	{
 		this.toolHandler = compiler;
+		logger.debug("MylynInteractionListener[" +this.toString()+"] is started ");
 	}
 
 	@Override
-	public void interactionObserved(InteractionEvent event) {	
-		System.out.println(makePrintable(event));
+	public void interactionObserved(InteractionEvent event) {
+		logger.debug("Event observed: "+ makePrintable(event));
 
-		if (event.getDelta().equals("keybinding"))
+		if (logger.isDebugEnabled() && event.getDelta().equals("keybinding"))
 		{
 
-			System.out.println(KeyBindingDirectory.lookUpKeyBinding(event.getOriginId()));
-			System.out.println(CommandNameDirectory.lookUpCommandName(event.getOriginId()));
+			logger.debug("With KeyBinding: "+KeyBindingDirectory.lookUpKeyBinding(event.getOriginId())+
+					"And Command Name: "+CommandNameDirectory.lookUpCommandName(event.getOriginId()));
 		}
 
 		toolHandler.handleInteractionEvent(event);
@@ -43,7 +46,7 @@ public class MylynInteractionListener implements IInteractionEventListener
 	@Override
 	public void stopMonitoring() {
 		//This is the signal that we are shutting down
-		System.err.println("Recieved command to shutdown");
+		logger.info("Got message to shut down");
 		if (toolHandler != null)
 		{
 			toolHandler.isShuttingDown();
@@ -73,6 +76,12 @@ public class MylynInteractionListener implements IInteractionEventListener
 		builder.append(event.getStructureHandle());
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public static void setLogger(Logger logger)
+	{
+		MylynInteractionListener.logger = logger;
+		
 	}
 
 }

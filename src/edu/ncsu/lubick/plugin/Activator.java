@@ -22,6 +22,7 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.toolmanagement.ToolStreamDiskWriter;
 import edu.ncsu.lubick.util.CommandNameDirectory;
@@ -71,6 +72,28 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	}
 
 	private void setupLog4j() {
+		makeLoggerForToolStreams();
+		makeGeneralPurposeLogger();
+
+	}
+
+	private void makeGeneralPurposeLogger()
+	{
+		FileAppender fa = new FileAppender();
+		fa.setName("GeneralLogging");
+		fa.setFile("ScreencastEclipseLog.log");
+		fa.setLayout(new PatternLayout("%-4r [%t] %-5p %c{1} %x - %m%n"));
+		fa.setThreshold(Level.DEBUG);
+		fa.setAppend(false);
+		fa.activateOptions();	//make the logging file
+
+		Logger.getRootLogger().addAppender(fa);
+		
+		NetworkToolStreamReporter.setLogger(Logger.getLogger("GeneralLogging." + NetworkToolStreamReporter.class.getName()));
+	}
+
+	private void makeLoggerForToolStreams()
+	{
 		FileAppender fa = new FileAppender();
 		fa.setName("ToolStreamLogging");
 		fa.setFile("ToolStreamLog.log");
@@ -82,7 +105,6 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		Logger.getRootLogger().addAppender(fa);
 
 		ToolEventCompiler.setLogger(Logger.getLogger("ToolStreamLogging." + ToolEventCompiler.class.getName()));
-
 	}
 
 	/*

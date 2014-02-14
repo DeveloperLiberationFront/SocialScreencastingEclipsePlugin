@@ -12,22 +12,25 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 public class NetworkToolStreamReporter implements IToolStreamReporter {
 
 	private static final long DELAY_FOR_REPORTING_MS = 60_000;
+	private static Logger logger;
 	private Timer timer;
 	private JSONArray jarr = new JSONArray();
 	private CloseableHttpClient client = HttpClients.createDefault();
 
 	public NetworkToolStreamReporter()
 	{
-		setUpFileChangeTimer();
+		setUpToolStreamReportTimer();
+		logger.debug("Network Stream Reporter set up");
 	}
 
-	private void setUpFileChangeTimer()
+	private void setUpToolStreamReportTimer()
 	{
 		timer = new Timer(true);
 		timer.schedule(new TimerTask() {
@@ -40,23 +43,23 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 				{
 					try
 					{
-						copy = new JSONArray(jarr);
+						copy = new JSONArray(jarr.toString());
 						jarr = new JSONArray();
 					}
 					catch (JSONException e)
 					{
-						System.err.println("Problem copying jarr");
-						e.printStackTrace();
+						logger.fatal("Problem copying jarr",e);
 					}
 				}
 				try
 				{
 					reportThisSetOfEvents(copy);
+					System.out.println("Successfully reported "+copy.length()+" tools");	//for dev purposes
+					logger.info("Successfully reported "+copy.length()+" tools");	//for long term debugging
 				}
 				catch (IOException e)
 				{
-					System.err.println("Problem reporting events");
-					e.printStackTrace();
+					logger.error("Problem reporting events",e);
 				}
 			}
 		}, DELAY_FOR_REPORTING_MS, DELAY_FOR_REPORTING_MS);
@@ -64,6 +67,10 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 
 	protected void reportThisSetOfEvents(JSONArray copy) throws IOException
 	{
+		if (copy.length() < 1)
+		{
+			return;
+		}
 		HttpPost httpPost = new HttpPost("http://localhost:4443/reportTool");
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("pluginName", "Eclipse"));
@@ -86,7 +93,7 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 		}
 		catch (JSONException e)
 		{
-			e.printStackTrace();
+			logger.error("Problem storing "+toolEvent,e);
 		}
 
 	}
@@ -94,17 +101,20 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 	@Override
 	public void isShuttingDown()
 	{
-		// TODO Auto-generated method stub
-
+		logger.debug("Got shutdown message");
 		try
 		{
 			client.close();
 		}
 		catch (IOException e)
 		{
-			System.err.println("Problem closing down HTTP client");
-			e.printStackTrace();
+			logger.error("Problem closing down HTTP client",e);
 		}
+	}
+
+	public static void setLogger(Logger logger)
+	{
+		NetworkToolStreamReporter.logger = logger;
 	}
 
 }

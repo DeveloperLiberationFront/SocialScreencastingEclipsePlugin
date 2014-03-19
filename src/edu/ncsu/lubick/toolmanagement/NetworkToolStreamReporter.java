@@ -72,6 +72,7 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 			return;
 		}
 		HttpPost httpPost = new HttpPost("http://localhost:4443/reportTool");
+
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("pluginName", "Eclipse"));
 		nvps.add(new BasicNameValuePair("toolUsages", copy.toString()));

@@ -11,7 +11,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mylyn.internal.monitor.usage.UiUsageMonitorPlugin;
 import org.eclipse.mylyn.monitor.core.IInteractionEventListener;
 import org.eclipse.mylyn.monitor.ui.MonitorUi;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -127,7 +126,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(WorkbenchPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(JavaPlugin.getDefault().getPreferenceStore());
 		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(EditorsPlugin.getDefault().getPreferenceStore());
-		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(PDEPlugin.getDefault().getPreferenceStore());
+		//UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(PDEPlugin.getDefault().getPreferenceStore());
 
 		super.stop(context);
 	}
@@ -170,8 +169,8 @@ public class Activator extends AbstractUIPlugin implements IStartup
 						WorkbenchPlugin.getDefault().getPreferenceStore());
 				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
 						EditorsPlugin.getDefault().getPreferenceStore());
-				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
-						PDEPlugin.getDefault().getPreferenceStore());
+				//UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
+				//		PDEPlugin.getDefault().getPreferenceStore());
 
 
 			}

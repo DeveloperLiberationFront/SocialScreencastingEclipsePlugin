@@ -2,23 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ScreenCastingEclipsePlugin
 Bundle-SymbolicName: ScreenCastingEclipsePlugin;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: edu.ncsu.lubick.plugin.Activator
 Bundle-Vendor: edu.ncsu
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.mylyn.monitor.core,
  org.eclipse.mylyn.monitor.ui,
+ org.eclipse.mylyn.monitor.usage,
  org.eclipse.mylyn.context.core,
- org.eclipse.core.resources;bundle-version="3.8.101",
- org.eclipse.jdt.ui;bundle-version="3.9.1",
- org.eclipse.pde.ui;bundle-version="3.8.0",
- org.eclipse.ui.editors;bundle-version="3.8.100",
- org.apache.commons.logging;bundle-version="1.1.1"
+ org.eclipse.core.resources;bundle-version="3.8.0",
+ org.eclipse.jdt.ui;bundle-version="3.8.0",
+ org.eclipse.ui.editors;bundle-version="3.8.0",
+ org.apache.commons.logging;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.mylyn.internal.monitor.usage,
- org.junit;version="4.11.0"
 Bundle-ClassPath: .,
  lib/log4j-1.2.17.jar,
  lib/java-json.jar,

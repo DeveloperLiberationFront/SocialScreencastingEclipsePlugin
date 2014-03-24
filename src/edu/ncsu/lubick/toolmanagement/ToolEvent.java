@@ -22,7 +22,7 @@ public class ToolEvent
 	{
 		this.toolName = toolName;
 		this.toolClass = toolClass;
-		this.keyPresses = keyPresses;
+		this.keyPresses = keyPresses == null? InteractionEventConvertor.MENU_KEYBINDING:keyPresses;
 		this.timeStamp = timeStamp;
 		this.duration = duration;
 	}

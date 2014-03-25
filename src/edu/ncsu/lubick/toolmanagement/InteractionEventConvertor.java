@@ -31,9 +31,8 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 	public static final int DEFAULT_KEYBINDING_DURATION = 5000;
 	public static final int THRESHOLD_KEYBINDING_DURATION = 2000;
 
-	private boolean wasMenuEventPreviously = false;
-	private Date previousTimeStamp = null;
 	private Logger loggerForProblems;
+	private boolean reloadPreviousEvent;
 	private final String loggingPrefix = "["+getClass()+"]";
 	private List<ToolEvent> convertedEvents = new ArrayList<>();
 
@@ -48,48 +47,6 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 		this.loggerForProblems = loggerForProblems;
 		InteractionEventConversionState.setStateContext(this);
 
-	}
-
-	@Deprecated
-	public ToolEvent convert(InteractionEvent event) 
-	{
-		//we only handle these types of events
-		if (!event.getDelta().equals(MYLYN_KEYBINDING) && !event.getDelta().equals(MYLYN_MENU))
-		{
-			return null;
-		}
-
-
-		previousTimeStamp = event.getDate();
-
-		String keyPresses = MENU_KEYBINDING;
-		if (event.getDelta().equals(MYLYN_KEYBINDING) && !checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(event))
-		{
-			keyPresses = KeyBindingDirectory.lookUpKeyBinding(event.getOriginId());
-		}
-		if (event.getDelta().equals(MYLYN_MENU))
-		{
-			wasMenuEventPreviously = true;
-			return null;		//we'll wait until next time
-		}
-
-		wasMenuEventPreviously = false;
-		String toolName = CommandNameDirectory.lookUpCommandName(event.getOriginId());
-
-		ToolEvent retVal = new ToolEvent(toolName, "", keyPresses, event.getDate(), 15000);
-
-		return retVal;
-	}
-
-	private boolean checkIfCurrentKeybindingEventMatchesPreviousMenuEvent(InteractionEvent event) {
-		if (!wasMenuEventPreviously)
-			return false;
-		if (event.getDate().equals(previousTimeStamp))
-			return true;
-
-		logUnusualBehavior("Unusual happenings.  Menu item was followed by a non-matching \"keybinding\".  ");
-		logUnusualBehavior(String.format("Date %s != Date %s (%d != %d)", previousTimeStamp, event.getDate(), previousTimeStamp.getTime(), event.getDate().getTime()));
-		return false;
 	}
 
 	@Override
@@ -120,9 +77,9 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 		}
 	}
 	
-	List<ToolEvent> returnable =new ArrayList<ToolEvent>();
+	List<ToolEvent> returnable = new ArrayList<ToolEvent>();
 
-	private boolean reloadPreviousEvent;
+	
 
 	public List<ToolEvent> getConvertedEvents() 
 	{

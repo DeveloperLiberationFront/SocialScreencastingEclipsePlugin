@@ -97,7 +97,7 @@ public class ToolStreamDiskWriter implements RotatingFileManagerListener, IToolS
 			e.printStackTrace();
 			return;
 		}
-		rotatingFileManager.getCurrentFileStream().write(toWrite.getBytes());
+		rotatingFileManager.getCurrentFileStream().write(toWrite.getBytes("UTF-8"));
 	
 	}
 

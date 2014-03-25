@@ -35,7 +35,7 @@ public class ToolEventCompiler
 		{
 			fileLogger = Logger.getRootLogger();	
 		}
-		fileLogger.info("Eclipse has started up on "+new Date());
+		fileLogger.info("Screencasting Eclipse Plugin v1.05 has started up on "+new Date());
 		
 		
 		createToolReporter();

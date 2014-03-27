@@ -2,10 +2,15 @@ package edu.ncsu.lubick.plugin;
 
 import java.io.File;
 
+import javax.annotation.Resources;
+
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mylyn.internal.monitor.usage.UiUsageMonitorPlugin;
@@ -80,7 +85,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	{
 		FileAppender fa = new FileAppender();
 		fa.setName("GeneralLogging");
-		fa.setFile("ScreencastEclipseLog.log");
+		fa.setFile(ResourcesPlugin.getWorkspace() + "-ScreencastEclipseLog.log");
 		fa.setLayout(new PatternLayout("%-4r [%t] %-5p %c{1} %x - %m%n"));
 		fa.setThreshold(Level.DEBUG);
 		fa.setAppend(false);
@@ -96,7 +101,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	{
 		FileAppender fa = new FileAppender();
 		fa.setName("ToolStreamLogging");
-		fa.setFile("ToolStreamLog.log");
+		fa.setFile(ResourcesPlugin.getWorkspace() + "-ToolStreamLog.log");
 		fa.setLayout(new PatternLayout("%-4r [%t] %-5p %c{1} %x - %m%n"));
 		fa.setThreshold(Level.ALL);
 		fa.setAppend(false);

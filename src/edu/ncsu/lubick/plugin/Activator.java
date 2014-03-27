@@ -85,7 +85,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	{
 		FileAppender fa = new FileAppender();
 		fa.setName("GeneralLogging");
-		fa.setFile(ResourcesPlugin.getWorkspace() + "-ScreencastEclipseLog.log");
+		fa.setFile(ResourcesPlugin.getWorkspace().getRoot().getLocation().lastSegment() + "-ScreencastEclipseLog.log");
 		fa.setLayout(new PatternLayout("%-4r [%t] %-5p %c{1} %x - %m%n"));
 		fa.setThreshold(Level.DEBUG);
 		fa.setAppend(false);
@@ -101,7 +101,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	{
 		FileAppender fa = new FileAppender();
 		fa.setName("ToolStreamLogging");
-		fa.setFile(ResourcesPlugin.getWorkspace() + "-ToolStreamLog.log");
+		fa.setFile(ResourcesPlugin.getWorkspace().getRoot().getLocation().lastSegment() + "-ToolStreamLog.log");
 		fa.setLayout(new PatternLayout("%-4r [%t] %-5p %c{1} %x - %m%n"));
 		fa.setThreshold(Level.ALL);
 		fa.setAppend(false);

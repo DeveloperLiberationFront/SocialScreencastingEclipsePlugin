@@ -20,7 +20,7 @@ import org.json.JSONException;
 
 public class NetworkToolStreamReporter implements IToolStreamReporter {
 
-	private static final long DELAY_FOR_REPORTING_MS = 10_000;
+	private static final long DELAY_FOR_REPORTING_MS = 60_000;
 	private static Logger logger;
 	private Timer timer;
 	private JSONArray jarr = new JSONArray();
@@ -82,16 +82,17 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 		}
 		HttpPost httpPost = new HttpPost("http://localhost:4443/reportTool");
 		try {
-		httpPost.setConfig(RequestConfig.custom().setConnectionRequestTimeout(5).setConnectTimeout(5).build());
-		
-
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		nvps.add(new BasicNameValuePair("pluginName", "Eclipse"));
-		nvps.add(new BasicNameValuePair("toolUsages", copy.toString()));
+			//I don't know if this helps or not
+			httpPost.setConfig(RequestConfig.custom().setConnectionRequestTimeout(5).setConnectTimeout(5).build());
 
 
-		httpPost.setEntity(new UrlEncodedFormEntity(nvps));
-		client.execute(httpPost);
+			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+			nvps.add(new BasicNameValuePair("pluginName", "Eclipse"));
+			nvps.add(new BasicNameValuePair("toolUsages", copy.toString()));
+
+
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+			client.execute(httpPost);
 		}
 		finally {
 			httpPost.reset();
@@ -137,7 +138,7 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 	{
 		NetworkToolStreamReporter.logger = logger;
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable
 	{

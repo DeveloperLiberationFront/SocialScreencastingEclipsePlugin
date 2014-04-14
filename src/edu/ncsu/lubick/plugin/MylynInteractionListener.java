@@ -25,16 +25,24 @@ public class MylynInteractionListener implements IInteractionEventListener
 		logger.debug("MylynInteractionListener[" +this.toString()+"] is started ");
 	}
 
+	StringBuilder logBuilder = new StringBuilder();
+	
 	@Override
 	public void interactionObserved(InteractionEvent event) {
-		logger.debug("Event observed: "+ makePrintable(event));
+		logBuilder.append("Event observed: ");
+		logBuilder.append(makePrintable(event));
 
 		if (logger.isDebugEnabled() && "keybinding".equals(event.getDelta()))
 		{
 
-			logger.debug("With KeyBinding: "+KeyBindingDirectory.lookUpKeyBinding(event.getOriginId())+
-					"And Command Name: "+CommandNameDirectory.lookUpCommandName(event.getOriginId()));
+			logBuilder.append("With KeyBinding: ");
+			logBuilder.append(KeyBindingDirectory.lookUpKeyBinding(event.getOriginId()));
+			logBuilder.append("And Command Name: ");
+			logBuilder.append(CommandNameDirectory.lookUpCommandName(event.getOriginId()));
 		}
+		
+		logger.debug(logBuilder.toString());
+		logBuilder.delete(0, logBuilder.length());
 
 		toolHandler.handleInteractionEvent(event);
 

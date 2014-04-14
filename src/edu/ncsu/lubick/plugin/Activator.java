@@ -90,7 +90,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		Logger.getRootLogger().addAppender(fa);
 		
 		NetworkToolStreamReporter.setLogger(Logger.getLogger("GeneralLogging." + NetworkToolStreamReporter.class.getName()));
-		MylynInteractionListener.setLogger(Logger.getLogger("GeneralLogging." + NetworkToolStreamReporter.class.getName()));
+		MylynInteractionListener.setLogger(Logger.getLogger("GeneralLogging." + MylynInteractionListener.class.getName()));
 	}
 
 	private void makeLoggerForToolStreams()

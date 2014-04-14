@@ -43,11 +43,11 @@ public abstract class InteractionEventConversionState
 	}
 
 	protected boolean isKeyBindingEvent(InteractionEvent event) {
-		return event.getDelta().equals(MYLYN_KEYBINDING);
+		return MYLYN_KEYBINDING.equals(event.getDelta());
 	}
 	
 	protected boolean isMenuEvent(InteractionEvent event) {
-		return event.getDelta().equals(MYLYN_MENU);
+		return MYLYN_MENU.equals(event.getDelta());
 	}
 
 	protected DurationDetectionState makeDurationDetectionStateForKeyBindingEvent(InteractionEvent event) {

@@ -29,7 +29,7 @@ public class MylynInteractionListener implements IInteractionEventListener
 	public void interactionObserved(InteractionEvent event) {
 		logger.debug("Event observed: "+ makePrintable(event));
 
-		if (logger.isDebugEnabled() && event.getDelta().equals("keybinding"))
+		if (logger.isDebugEnabled() && "keybinding".equals(event.getDelta()))
 		{
 
 			logger.debug("With KeyBinding: "+KeyBindingDirectory.lookUpKeyBinding(event.getOriginId())+

@@ -83,7 +83,7 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 		HttpPost httpPost = new HttpPost("http://localhost:4443/reportTool");
 		try {
 			//I don't know if this helps or not
-			httpPost.setConfig(RequestConfig.custom().setConnectionRequestTimeout(5).setConnectTimeout(5).build());
+			httpPost.setConfig(RequestConfig.custom().setConnectionRequestTimeout(5000).setConnectTimeout(5000).build());
 
 
 			List<NameValuePair> nvps = new ArrayList<NameValuePair>();

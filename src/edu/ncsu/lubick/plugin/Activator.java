@@ -1,6 +1,8 @@
 package edu.ncsu.lubick.plugin;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Map;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -8,6 +10,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mylyn.internal.monitor.usage.UiUsageMonitorPlugin;
 import org.eclipse.mylyn.monitor.core.IInteractionEventListener;
@@ -67,6 +72,9 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		plugin = this;
 
 		System.out.println("normal startup");
+		
+		
+		
 
 		
 	}
@@ -198,5 +206,28 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler();
 		this.interactionListener = new MylynInteractionListener(toolStreamCompiler);
 		MonitorUi.addInteractionListener(this.interactionListener);
+		
+		//muckingAround();
+	}
+
+	private void muckingAround()
+	{
+		BindingManager bm = (BindingManager) PlatformUI.getWorkbench().getAdapter(BindingManager.class);
+		
+		System.out.println("Binding manager: "+ bm);
+		if (bm != null) {
+			try{
+				Object map  = bm.getActiveBindingsDisregardingContext();
+				System.out.println("Map of bindings:"+map);
+				@SuppressWarnings("unchecked")
+				Map<TriggerSequence, Collection<Binding>> castMap = (Map<TriggerSequence, Collection<Binding>>) map;
+				System.out.println("Map was cast successfully");
+			}
+			catch (Exception e) {
+				System.err.println("Problem casting");
+				e.printStackTrace();
+			}
+			
+		}
 	}
 }

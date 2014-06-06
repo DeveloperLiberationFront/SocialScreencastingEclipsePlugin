@@ -9,20 +9,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.mylyn.internal.monitor.usage.UiUsageMonitorPlugin;
-import org.eclipse.mylyn.monitor.core.IInteractionEventListener;
-import org.eclipse.mylyn.monitor.ui.MonitorUi;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -51,8 +45,8 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 	// The shared instance
 	private static Activator plugin;
-
-	private IInteractionEventListener interactionListener;
+	
+	private EclipseCommandListener commandListener;
 
 
 	/**
@@ -98,7 +92,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		Logger.getRootLogger().addAppender(fa);
 		
 		NetworkToolStreamReporter.setLogger(Logger.getLogger("GeneralLogging." + NetworkToolStreamReporter.class.getName()));
-		MylynInteractionListener.setLogger(Logger.getLogger("GeneralLogging." + MylynInteractionListener.class.getName()));
+		EclipseCommandListener.setLogger(Logger.getLogger("GeneralLogging." + EclipseCommandListener.class.getName()));
 	}
 
 	private void makeLoggerForToolStreams()
@@ -122,21 +116,10 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		if (interactionListener != null)
-		{
-			this.interactionListener.stopMonitoring();
-			MonitorUi.removeInteractionListener(this.interactionListener);
-		}
-		this.interactionListener = null;
-
 		plugin = null;
-
-
-		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(WorkbenchPlugin.getDefault().getPreferenceStore());
-		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(JavaPlugin.getDefault().getPreferenceStore());
-		UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(EditorsPlugin.getDefault().getPreferenceStore());
-		//UiUsageMonitorPlugin.getDefault().removeMonitoredPreferences(PDEPlugin.getDefault().getPreferenceStore());
-
+		commandListener.stopMonitoring();
+		commandListener = null;
+		
 		super.stop(context);
 	}
 
@@ -166,25 +149,8 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				//taken from the sample monitoring program.  Probably monitors more than I need
-				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
-						WorkbenchPlugin.getDefault().getPreferenceStore());
-				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
-						JavaPlugin.getDefault().getPreferenceStore());
-				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
-						WorkbenchPlugin.getDefault().getPreferenceStore());
-				UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
-						EditorsPlugin.getDefault().getPreferenceStore());
-				//UiUsageMonitorPlugin.getDefault().addMonitoredPreferences(
-				//		PDEPlugin.getDefault().getPreferenceStore());
-
-
-			}
-		});
-
+		
+		
 
 
 		File outputFolder = new File(MONITOR_FOLDER);
@@ -204,8 +170,16 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		ToolStreamDiskWriter.setOutputFolder(outputFolder);
 		
 		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler();
-		this.interactionListener = new MylynInteractionListener(toolStreamCompiler);
-		MonitorUi.addInteractionListener(this.interactionListener);
+		
+		commandListener = new EclipseCommandListener(workbench.getDisplay(), toolStreamCompiler); 
+		
+		try {
+			ICommandService systemCommandService = (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+			systemCommandService.addExecutionListener(commandListener);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 		//muckingAround();
 	}

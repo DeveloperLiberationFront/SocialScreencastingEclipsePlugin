@@ -1,6 +1,5 @@
 package edu.ncsu.lubick.toolmanagement;
 
-import static edu.ncsu.lubick.plugin.MylynInteractionListener.*;
 import static edu.ncsu.lubick.toolmanagement.InteractionEventConvertor.*;
 
 import java.util.ArrayList;
@@ -8,7 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.eclipse.mylyn.monitor.core.InteractionEvent;
+
+import edu.ncsu.lubick.plugin.InteractionEvent;
 
 
 /**
@@ -135,7 +135,7 @@ class DefaultState extends InteractionEventConversionState
 		}
 		else
 		{
-			logUnusualBehavior("Possible error: Ignored a \"relevant\" event in DefaultState" + makePrintable(event));
+			logUnusualBehavior("Possible error: Ignored a \"relevant\" event in DefaultState" + event);
 		}
 
 	}
@@ -185,11 +185,11 @@ class ExpectingKeyBindingState extends InteractionEventConversionState
 		else {
 			if (dateOfPreviousEvent.equals(event.getDate()))
 			{
-				logUnusualBehavior("Probably nothing, but "+makePrintable(event)+" was seen after a menu event, but before a keybinding event.  The time is okay, so, again, probably nothing.");
+				logUnusualBehavior("Probably nothing, but "+event+" was seen after a menu event, but before a keybinding event.  The time is okay, so, again, probably nothing.");
 			}
 			else 
 			{
-				logUnusualBehavior(makePrintable(event)+" was seen after a menu event, but before a keybinding event.");
+				logUnusualBehavior(event+" was seen after a menu event, but before a keybinding event.");
 				setState(new DefaultState());
 			}
 		}

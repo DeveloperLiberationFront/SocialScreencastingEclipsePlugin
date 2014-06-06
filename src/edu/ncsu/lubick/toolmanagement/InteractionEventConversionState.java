@@ -1,11 +1,9 @@
 package edu.ncsu.lubick.toolmanagement;
 
-import static edu.ncsu.lubick.plugin.MylynInteractionListener.*;
-
 import java.util.Date;
 
-import org.eclipse.mylyn.monitor.core.InteractionEvent;
-
+import edu.ncsu.lubick.plugin.EventType;
+import edu.ncsu.lubick.plugin.InteractionEvent;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.KeyBindingDirectory;
 
@@ -43,17 +41,17 @@ public abstract class InteractionEventConversionState
 	}
 
 	protected boolean isKeyBindingEvent(InteractionEvent event) {
-		return MYLYN_KEYBINDING.equals(event.getDelta());
+		return event.getType() == EventType.KEYBOARD_SHORTCUT_INVOCATION;
 	}
 	
 	protected boolean isMenuEvent(InteractionEvent event) {
-		return MYLYN_MENU.equals(event.getDelta());
+		return event.getType() == EventType.KEYBOARD_SHORTCUT_INVOCATION;
 	}
 
 	protected DurationDetectionState makeDurationDetectionStateForKeyBindingEvent(InteractionEvent event) {
 		DurationDetectionState dds = makeDurationDetectionStateForMenuEvent(event);
 		
-		dds.setCurrentEventsKeypresses(KeyBindingDirectory.lookUpKeyBinding(event.getOriginId()));
+		dds.setCurrentEventsKeypresses(KeyBindingDirectory.lookUpKeyBinding(event.getCommandId()));
 		
 		return dds;
 	}
@@ -61,7 +59,7 @@ public abstract class InteractionEventConversionState
 	protected DurationDetectionState makeDurationDetectionStateForMenuEvent(InteractionEvent event) {
 		DurationDetectionState dds = new DurationDetectionState();
 		
-		dds.setCurrentEventsCommandName(CommandNameDirectory.lookUpCommandName(event.getOriginId()));
+		dds.setCurrentEventsCommandName(CommandNameDirectory.lookUpCommandName(event.getCommandId()));
 		dds.setCurrentEventsStartDate(event.getDate());
 		
 		return dds;

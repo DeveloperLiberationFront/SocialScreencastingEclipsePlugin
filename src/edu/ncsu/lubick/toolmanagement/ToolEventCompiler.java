@@ -4,9 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.eclipse.mylyn.monitor.core.InteractionEvent;
 
-import edu.ncsu.lubick.plugin.MylynInteractionListener;
+import edu.ncsu.lubick.plugin.CommandEvent;
+import edu.ncsu.lubick.plugin.CommandReceiver;
+import edu.ncsu.lubick.plugin.InteractionEvent;
 
 
 /**
@@ -16,7 +17,7 @@ import edu.ncsu.lubick.plugin.MylynInteractionListener;
  * @author KevinLubick
  *
  */
-public class ToolEventCompiler 
+public class ToolEventCompiler implements CommandReceiver
 {
 
 	private static Logger fileLogger;
@@ -54,17 +55,19 @@ public class ToolEventCompiler
 		}
 	}
 
-	public void handleInteractionEvent(InteractionEvent iEvent) 
+	@Override
+	public void handleInteractionEvent(InteractionEvent event)
 	{
-		fileLogger.info(MylynInteractionListener.makePrintable(iEvent));
+		//fileLogger.info(MylynInteractionListener.makePrintable(iEvent));
 		
-		interactionEventConvertor.foundInteractionEvents(iEvent);
+		interactionEventConvertor.foundInteractionEvents(event);
 		
 		List<ToolEvent> results = interactionEventConvertor.getConvertedEvents();
 		
 		reportToolEvents(results);
 		
 	}
+	
 
 	private void reportToolEvents(List<ToolEvent> toolEvents) 
 	{
@@ -86,7 +89,5 @@ public class ToolEventCompiler
 		toolReporter.isShuttingDown();
 		fileLogger.info("Eclipse is shutting down "+new Date());
 	}
-
-
 
 }

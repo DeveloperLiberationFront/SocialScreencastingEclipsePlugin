@@ -13,6 +13,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -169,17 +170,23 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		
 		ToolStreamDiskWriter.setOutputFolder(outputFolder);
 		
-		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler();
+		final ToolEventCompiler toolStreamCompiler = new ToolEventCompiler();
 		
-		commandListener = new EclipseCommandListener(workbench.getDisplay(), toolStreamCompiler); 
-		
-		try {
-			ICommandService systemCommandService = (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-			systemCommandService.addExecutionListener(commandListener);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+		final Display display = workbench.getDisplay();
+		display.asyncExec(new Runnable() {
+			
+			@Override
+			public void run()
+			{
+				commandListener = new EclipseCommandListener(display, toolStreamCompiler); 
+				try {
+					ICommandService systemCommandService = (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+					systemCommandService.addExecutionListener(commandListener);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		//muckingAround();
 	}

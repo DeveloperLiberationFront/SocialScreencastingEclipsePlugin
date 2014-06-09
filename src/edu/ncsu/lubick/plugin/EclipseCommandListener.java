@@ -7,6 +7,8 @@ import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.swt.widgets.Display;
 
+import edu.ncsu.lubick.rating.ToolStreamRater;
+
 public class EclipseCommandListener implements IExecutionListener {
 
 	private static Logger logger;
@@ -69,6 +71,8 @@ public class EclipseCommandListener implements IExecutionListener {
 		System.out.println("Was key binding: "+keyInvocation);
 		System.out.println();
 		
+		ToolStreamRater rater = new ToolStreamRater(new CommandEvent(commandId, keyInvocation), event);
+		rater.rate();
 		receiver.handleInteractionEvent(CommandEvent.makeCommandEvent(commandId, keyInvocation));
 	}
 	

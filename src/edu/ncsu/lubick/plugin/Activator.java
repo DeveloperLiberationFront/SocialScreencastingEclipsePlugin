@@ -32,6 +32,7 @@ import org.osgi.framework.BundleContext;
 
 import edu.ncsu.lubick.instrumentation.EclipsePartListener;
 import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
+import edu.ncsu.lubick.rating.ToolStreamRater;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.toolmanagement.ToolStreamDiskWriter;

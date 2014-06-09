@@ -35,7 +35,7 @@ import org.osgi.framework.BundleContext;
 
 import edu.ncsu.lubick.instrumentation.EclipsePartListener;
 import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
-import edu.ncsu.lubick.rating.RatingTime;
+import edu.ncsu.lubick.rating.RatingData;
 import edu.ncsu.lubick.rating.ToolStreamRater;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
@@ -259,19 +259,19 @@ public class Activator extends AbstractUIPlugin implements IStartup
 				{
 
 					private boolean first = true;
-					private RatingTime start;
-					private RatingTime end;
+					private RatingData start;
+					private RatingData end;
 					
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
 						if(first)
 						{
-							start = new RatingTime();
+							start = new RatingData();
 						}
 						else
 						{
-							end = new RatingTime();
+							end = new RatingData();
 							ToolStreamRater rater = new ToolStreamRater();
 							System.out.println(rater.rate(start, end));
 						}

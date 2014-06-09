@@ -8,19 +8,14 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * Terrible name....
- * @author michael
- *
- */
-public class RatingTime {
+public class RatingData {
 	private IWorkbench workbench;
 	private IWorkbenchWindow workbenchWindow;
 	private IWorkbenchPage activePage;
 	private IWorkbenchPart activePart;
 	private Date time;
 	
-	public RatingTime() {
+	public RatingData() {
 		setWorkbench(PlatformUI.getWorkbench());
 		setWorkbenchWindow(getWorkbench().getWorkbenchWindows()[0]); // TODO this is hacky and should be getActiveWorkbenchWindow(), it just isn't working correctly for the testing stuff...
 		setActivePage(getWorkbenchWindow().getActivePage());

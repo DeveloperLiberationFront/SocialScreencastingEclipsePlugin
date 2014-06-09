@@ -13,7 +13,7 @@ public class ToolStreamRater {
 		raters.add(new ChangeRater());
 	}
 	
-	public float rate(RatingTime start, RatingTime end)
+	public float rate(RatingData start, RatingData end)
 	{
 		float rate = 0;
 		

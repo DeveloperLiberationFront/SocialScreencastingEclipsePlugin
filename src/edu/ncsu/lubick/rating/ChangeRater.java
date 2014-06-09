@@ -4,7 +4,7 @@ package edu.ncsu.lubick.rating;
 class ChangeRater extends AbstractRater {
 
 	@Override
-	public float rate(RatingTime start, RatingTime end)
+	public float rate(RatingData start, RatingData end)
 	{
 		float rating = 0;
 		rating += tabChange(start, end);
@@ -13,7 +13,7 @@ class ChangeRater extends AbstractRater {
 		return rating;
 	}
 	
-	private float tabChange(RatingTime start, RatingTime end)
+	private float tabChange(RatingData start, RatingData end)
 	{
 		if(start.getActivePart().equals(end.getActivePart()))
 		{

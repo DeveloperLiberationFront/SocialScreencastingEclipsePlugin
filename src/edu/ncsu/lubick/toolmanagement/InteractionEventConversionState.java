@@ -41,11 +41,11 @@ public abstract class InteractionEventConversionState
 	}
 
 	protected boolean isKeyBindingEvent(InteractionEvent event) {
-		return event.getType() == EventType.KEYBOARD_SHORTCUT_INVOCATION;
+		return event.getType() == EventType.INVOCATION_KEYBOARD_SHORTCUT;
 	}
 	
 	protected boolean isMenuEvent(InteractionEvent event) {
-		return event.getType() == EventType.KEYBOARD_SHORTCUT_INVOCATION;
+		return event.getType() == EventType.INVOCATION_KEYBOARD_SHORTCUT;
 	}
 
 	protected DurationDetectionState makeDurationDetectionStateForKeyBindingEvent(InteractionEvent event) {

@@ -40,7 +40,8 @@ public class ToolEventCompiler implements CommandReceiver
 		
 		
 		createToolReporter();
-		this.interactionEventConvertor = new InteractionEventConvertor(fileLogger);
+		InteractionEventConvertor.setLoggerForProblems(fileLogger);
+		this.interactionEventConvertor = new InteractionEventConvertor();
 		
 		
 	}

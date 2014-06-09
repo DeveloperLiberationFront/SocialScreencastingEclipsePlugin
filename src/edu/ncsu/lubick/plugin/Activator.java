@@ -16,12 +16,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import edu.ncsu.lubick.instrumentation.EclipsePartListener;
+import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.toolmanagement.ToolStreamDiskWriter;
@@ -147,12 +150,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	@Override
 	public void earlyStartup() {
 		System.out.println("Starting early");
-
-
-		final IWorkbench workbench = PlatformUI.getWorkbench();
-		
-		
-
+		IWorkbench workbench = PlatformUI.getWorkbench();
 
 		File outputFolder = new File(MONITOR_FOLDER);
 		if (!outputFolder.exists())
@@ -162,33 +160,28 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 		setupLog4j();
 		
-		EclipseKeyBindingService adapter = new EclipseKeyBindingService((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class));
+		EclipseKeyBindingService adapter = new EclipseKeyBindingService((IBindingService) workbench.getAdapter(IBindingService.class));
 		KeyBindingDirectory.initializeBindingService(adapter);
 		
-		EclipseCommandNameService commandService = new EclipseCommandNameService((ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class));
+		ICommandService systemCommandService = (ICommandService) workbench.getAdapter(ICommandService.class);
+		EclipseCommandNameService commandService = new EclipseCommandNameService(systemCommandService);
 		CommandNameDirectory.initializeCommandService(commandService);
 		
 		ToolStreamDiskWriter.setOutputFolder(outputFolder);
 		
-		final ToolEventCompiler toolStreamCompiler = new ToolEventCompiler();
+		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler();
 		
-		final Display display = workbench.getDisplay();
-		display.asyncExec(new Runnable() {
-			
-			@Override
-			public void run()
-			{
-				commandListener = new EclipseCommandListener(display, toolStreamCompiler); 
-				try {
-					ICommandService systemCommandService = (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-					systemCommandService.addExecutionListener(commandListener);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		commandListener = new EclipseCommandListener(toolStreamCompiler); 
+
+		systemCommandService.addExecutionListener(commandListener);
+
+		workbench.addWindowListener(new EclipseWindowListener());
 		
-		//muckingAround();
+		IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
+		
+		for(IWorkbenchWindow w:windows) {
+			w.getPartService().addPartListener(new EclipsePartListener());
+		}
 	}
 
 	private void muckingAround()

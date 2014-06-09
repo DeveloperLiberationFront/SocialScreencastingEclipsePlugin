@@ -28,7 +28,7 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 	public static final int DEFAULT_KEYBINDING_DURATION = 5000;
 	public static final int THRESHOLD_KEYBINDING_DURATION = 2000;
 
-	private Logger loggerForProblems;
+	private static Logger loggerForProblems = Logger.getRootLogger();
 	private boolean reloadPreviousEvent;
 	private final String loggingPrefix = "["+getClass()+"]";
 	private List<ToolEvent> convertedEvents = new ArrayList<>();
@@ -36,15 +36,13 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 	private InteractionEventConversionState currentState = new DefaultState();
 
 	public InteractionEventConvertor() {
-		this(Logger.getRootLogger());	//dummy value to avoid NPEs
-	}
-
-	public InteractionEventConvertor(Logger loggerForProblems) 
-	{
-		this.loggerForProblems = loggerForProblems;
 		InteractionEventConversionState.setStateContext(this);
-
 	}
+	
+	public static void setLoggerForProblems(Logger logger) {
+		loggerForProblems = logger;
+	}
+
 
 	@Override
 	public void logUnusualBehavior(String behavior)

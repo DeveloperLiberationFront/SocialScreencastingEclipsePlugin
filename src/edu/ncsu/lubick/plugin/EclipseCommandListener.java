@@ -13,23 +13,10 @@ public class EclipseCommandListener implements IExecutionListener {
 //	private final AtomicBoolean keyDown = new AtomicBoolean();
 	private CommandReceiver receiver;
 	
-	public EclipseCommandListener(Display display, CommandReceiver receiver)
+	public EclipseCommandListener(CommandReceiver receiver)
 	{
 		this.receiver = receiver;
-//		display.addFilter(SWT.KeyDown, new Listener() {
-//
-//			@Override
-//			public void handleEvent(Event event) {
-//				keyDown.set(true);
-//			}
-//		});
-//		display.addFilter(SWT.KeyUp, new Listener() {
-//
-//			@Override
-//			public void handleEvent(Event event) {
-//				keyDown.set(false);
-//			}
-//		});
+
 	}
 
 	@Override
@@ -68,7 +55,7 @@ public class EclipseCommandListener implements IExecutionListener {
 			StackTraceElement[] stackTrace = e.getStackTrace();
 			
 			for(StackTraceElement ste : stackTrace) {
-				System.out.println(ste.getClassName());
+				//System.out.println(ste.getClassName());
 				if (ste.getClassName().contains("$KeyDownFilter")) {
 					keyInvocation = true;
 					break;

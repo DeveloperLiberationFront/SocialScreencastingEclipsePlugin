@@ -11,13 +11,15 @@ class ChangeRater extends AbstractRater {
 	@Override
 	public float rate()
 	{
-		tabChange();
-		return 7.5f;
+		float rating = 0;
+		rating += tabChange();
+		// Should += any of functions
+		rating /= 1.0f; // Divide by number of functions
+		return rating;
 	}
 	
 	private float tabChange()
 	{
-		System.out.println(getActivePage());
 		return 0;
 	}
 	

@@ -69,7 +69,7 @@ public class ToolStreamRater {
 		return commandEvent;
 	}
 
-	public void setCommandEvent(CommandEvent commandEvent) {
+	private void setCommandEvent(CommandEvent commandEvent) {
 		this.commandEvent = commandEvent;
 	}
 
@@ -77,7 +77,7 @@ public class ToolStreamRater {
 		return executionEvent;
 	}
 
-	public void setExecutionEvent(ExecutionEvent executionEvent) {
+	private void setExecutionEvent(ExecutionEvent executionEvent) {
 		this.executionEvent = executionEvent;
 	}
 	
@@ -85,7 +85,7 @@ public class ToolStreamRater {
 		return toolStreamRater;
 	}
 	
-	public void setToolStreamRater(ToolStreamRater toolStreamRater) {
+	private void setToolStreamRater(ToolStreamRater toolStreamRater) {
 		this.toolStreamRater = toolStreamRater;
 	}
 
@@ -93,7 +93,7 @@ public class ToolStreamRater {
 		return workbench;
 	}
 
-	public void setWorkbench(IWorkbench workbench) {
+	private void setWorkbench(IWorkbench workbench) {
 		this.workbench = workbench;
 	}
 
@@ -101,7 +101,7 @@ public class ToolStreamRater {
 		return workbenchWindow;
 	}
 
-	public void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
+	private void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
 		this.workbenchWindow = workbenchWindow;
 	}
 
@@ -109,7 +109,7 @@ public class ToolStreamRater {
 		return activePage;
 	}
 
-	public void setActivePage(IWorkbenchPage activePage) {
+	private void setActivePage(IWorkbenchPage activePage) {
 		this.activePage = activePage;
 	}
 
@@ -117,7 +117,15 @@ public class ToolStreamRater {
 		return activePart;
 	}
 
-	public void setActiveWindow(IWorkbenchPart activePart) {
+	private void setActiveWindow(IWorkbenchPart activePart) {
+		this.activePart = activePart;
+	}
+	
+	public IWorkbenchPart getActivePart() {
+		return activePart;
+	}
+	
+	private void setActivePart(IWorkbenchPart activePart) {
 		this.activePart = activePart;
 	}
 }

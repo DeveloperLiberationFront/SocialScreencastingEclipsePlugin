@@ -13,7 +13,14 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -121,8 +128,10 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		commandListener.stopMonitoring();
-		commandListener = null;
+		if (commandListener != null) {
+			commandListener.stopMonitoring();
+			commandListener = null;
+		}
 		
 		super.stop(context);
 	}
@@ -182,6 +191,32 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		for(IWorkbenchWindow w:windows) {
 			w.getPartService().addPartListener(new EclipsePartListener());
 		}
+		
+		final Display display = workbench.getDisplay();
+		display.asyncExec(new Runnable() {
+			
+			@Override
+			public void run()
+			{
+				display.addFilter(SWT.Show, new Listener() {
+					
+					@Override
+					public void handleEvent(Event event)
+					{
+						System.out.println("SWT.Show:");
+						System.out.println("\t"+event);
+						Shell shell = event.display.getActiveShell();
+						shell.addShellListener(new ShellAdapter() {
+							@Override
+							public void shellClosed(ShellEvent e)
+							{
+								System.out.println("shellClosed: "+e);
+							}
+						});
+					}
+				});
+			}
+		});
 	}
 
 	private void muckingAround()
@@ -195,7 +230,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 				System.out.println("Map of bindings:"+map);
 				@SuppressWarnings("unchecked")
 				Map<TriggerSequence, Collection<Binding>> castMap = (Map<TriggerSequence, Collection<Binding>>) map;
-				System.out.println("Map was cast successfully");
+				System.out.println("Map was cast successfully " +castMap.hashCode());
 			}
 			catch (Exception e) {
 				System.err.println("Problem casting");

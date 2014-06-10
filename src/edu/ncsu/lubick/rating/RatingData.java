@@ -1,5 +1,10 @@
 package edu.ncsu.lubick.rating;
 
+import java.awt.AWTException;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.util.Date;
 
 import org.eclipse.ui.IWorkbench;
@@ -14,6 +19,7 @@ public class RatingData {
 	private IWorkbenchPage activePage;
 	private IWorkbenchPart activePart;
 	private Date time;
+	private BufferedImage img;
 	
 	public RatingData() {
 		setWorkbench(PlatformUI.getWorkbench());
@@ -21,8 +27,25 @@ public class RatingData {
 		setActivePage(getWorkbenchWindow().getActivePage());
 		setActivePart(getActivePage().getActivePart());
 		setTime(new Date());
+		setImage();
 	}
 	
+	public BufferedImage getImage()
+	{
+		return img;
+	}
+	
+	private void setImage()
+	{
+		try {
+			Robot robot = new Robot();
+			Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+			img = robot.createScreenCapture(screenRect);
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public IWorkbench getWorkbench() {
 		return workbench;
 	}

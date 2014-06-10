@@ -1,28 +1,22 @@
 package edu.ncsu.lubick.rating;
 
-import java.awt.AWTException;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 
 class ChangeRater extends AbstractRater {
+
+	public static final float IDEAL_CHANGE = 10.0f;
 
 	@Override
 	public float rate(RatingData start, RatingData end)
 	{
 		float rating = 0;
 		rating += tabChange(start, end);
-		rating += differenceImage();
+		rating += differenceImage(start, end);
 		// Should += any of functions
 		rating /= 2.0f; // Divide by number of functions
 		return rating;
 	}
-	
+
 	private float tabChange(RatingData start, RatingData end)
 	{
 		if(start.getActivePart().equals(end.getActivePart()))
@@ -34,66 +28,38 @@ class ChangeRater extends AbstractRater {
 			return 0.0f;
 		}
 	}
-	
-	private float differenceImage()
+
+	private float differenceImage(RatingData start, RatingData end)
 	{
-		Robot robot = null;
-		try {
-			robot = new Robot();
-		} catch (AWTException awe) {
-			//logger.info("Could not initialize Robot",awe);
+		int width1 = start.getImage().getWidth(null);
+		int width2 = end.getImage().getWidth(null);
+		int height1 = start.getImage().getHeight(null);
+		int height2 = end.getImage().getHeight(null);
+		if ((width1 != width2) || (height1 != height2))
+		{
+			System.err.println("Error: Images dimensions mismatch");
+			System.exit(1);
 		}
-		 Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-		 BufferedImage img1 = robot.createScreenCapture(screenRect);
-		 try {
-			ImageIO.write(img1, "jpg", new File("C:\\Users\\Owner\\Desktop\\before.jpg"));
-		} catch (IOException e1) {
-			//logger.fatal("Could not save image", e1);
+		int counter = 0;
+		for (int i = 0; i < width1; i++)
+		{
+			for (int j = 0; j < height1; j++)
+			{
+				if (start.getImage().getRGB(i, j) != end.getImage().getRGB(i, j))
+				{
+					counter++;
+				}
+			}
 		}
-		 
-		 try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		float diff = counter/(float)(width1 * height1); //decimal from 0 to 1
+
+		if (diff > IDEAL_CHANGE/100.f) //"ideal change" is 10% for now
+		{
+			return IDEAL_CHANGE/diff; // 10/0.2 gives a score of 50 (out of 100 max)
 		}
-		 
-		 BufferedImage img2 = robot.createScreenCapture(screenRect);
-		 try {
-			ImageIO.write(img2, "jpg", new File("C:\\Users\\Owner\\Desktop\\after.jpg"));
-		} catch (IOException e1) {
-			//logger.fatal("Could not save image", e1);
-		}
-		
-		
-	    int width1 = img1.getWidth(null);
-	    int width2 = img2.getWidth(null);
-	    int height1 = img1.getHeight(null);
-	    int height2 = img2.getHeight(null);
-	    if ((width1 != width2) || (height1 != height2))
-	    {
-	      System.err.println("Error: Images dimensions mismatch");
-	      System.exit(1);
-	    }
-	    int counter = 0;
-	    for (int i = 0; i < width1; i++)
-	    {
-	    	for (int j = 0; j < height1; j++)
-	    	{
-	    		if (img1.getRGB(i, j) != img2.getRGB(i, j))
-	    		{
-	    			counter++;
-	    		}
-	    	}
-	    }
-	    float diff = counter/(float)(width1 * height1);
-	    if (diff > 10)
-	    {
-	    	return 10.0f/diff;
-	    }
-	    return diff/10.0f;
-  }
-	
+		return diff / IDEAL_CHANGE * 10000.f; // 0.05/10 * 10000 gives 50 (out of 100)
+	}
+
 	@Override
 	public String toString()
 	{

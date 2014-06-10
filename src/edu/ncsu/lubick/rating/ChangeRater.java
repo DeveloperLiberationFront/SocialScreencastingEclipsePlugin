@@ -57,7 +57,7 @@ class ChangeRater extends AbstractRater {
 		{
 			return IDEAL_CHANGE/diff; // 10/0.2 gives a score of 50 (out of 100 max)
 		}
-		return diff / IDEAL_CHANGE * 10000.f; // 0.05/10 * 10000 gives 50 (out of 100)
+		return 10 + diff / IDEAL_CHANGE * 9000.f; //min 10, max 100
 	}
 
 	@Override

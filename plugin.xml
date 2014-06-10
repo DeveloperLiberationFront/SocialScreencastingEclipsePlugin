@@ -14,5 +14,12 @@
             class="edu.ncsu.lubick.plugin.Activator">
       </startup>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors.documentProviders">
+      <provider
+            class="screencastingeclipseplugin.Provider1"
+            id="ScreenCastingEclipsePlugin.provider1">
+      </provider>
+   </extension>
 
 </plugin>

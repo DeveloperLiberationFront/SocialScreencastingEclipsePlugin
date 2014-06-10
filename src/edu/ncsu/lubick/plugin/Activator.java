@@ -1,7 +1,11 @@
 package edu.ncsu.lubick.plugin;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Map;
+
+import javax.swing.Timer;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
@@ -25,12 +29,15 @@ import org.osgi.framework.BundleContext;
 import edu.ncsu.lubick.instrumentation.EclipseCommandListener;
 import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
 import edu.ncsu.lubick.instrumentation.SWT_Instrumentation;
+import edu.ncsu.lubick.rating.RatingData;
+import edu.ncsu.lubick.rating.ToolStreamRater;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.EclipseCommandNameService;
 import edu.ncsu.lubick.util.EclipseKeyBindingService;
 import edu.ncsu.lubick.util.KeyBindingDirectory;
+
 
 /**
  * The activator class controls the plug-in life cycle
@@ -184,6 +191,9 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		
 		Display display = workbench.getDisplay();
 		display.asyncExec(new SWT_Instrumentation(display, toolStreamCompiler));
+
+
+		timerStuff();
 	}
 
 	@SuppressWarnings("unused")
@@ -208,8 +218,48 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		}
 	}
 	
+	private void timerStuff()
+	{
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				
+				Timer timer = new Timer(5000, new ActionListener()
+				{
+
+					private boolean first = true;
+					private RatingData start;
+					private RatingData end;
+					
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						if(first)
+						{
+							System.out.println("Starting....................");
+							start = new RatingData();
+						}
+						else
+						{
+							System.out.println("Ending......................");
+							end = new RatingData();
+							ToolStreamRater rater = new ToolStreamRater();
+							System.out.println(rater.rate(start, end));
+						}
+						
+						first = !first;
+					}
+				});
+				
+				timer.setRepeats(true);
+				timer.start();
+			}
+		});
+	}
 	private static void setLogger(Logger newLogger)
 	{
 		logger = newLogger;
+
 	}
 }

@@ -19,3 +19,4 @@ Bundle-ClassPath: .,
  lib/fluent-hc-4.3.2.jar,
  lib/httpclient-4.3.2.jar,
  lib/httpcore-4.3.1.jar
+Import-Package: org.eclipse.jface.text

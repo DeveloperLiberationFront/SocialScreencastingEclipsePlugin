@@ -267,10 +267,12 @@ public class Activator extends AbstractUIPlugin implements IStartup
 					{
 						if(first)
 						{
+							System.out.println("Starting....................");
 							start = new RatingData();
 						}
 						else
 						{
+							System.out.println("Ending......................");
 							end = new RatingData();
 							ToolStreamRater rater = new ToolStreamRater();
 							System.out.println(rater.rate(start, end));

@@ -20,7 +20,7 @@ import org.json.JSONException;
 
 public class NetworkToolStreamReporter implements IToolStreamReporter {
 
-	private static final long DELAY_FOR_REPORTING_MS = 60_000;
+	private static final long DELAY_FOR_REPORTING_MS = 600_000; //XXX fix back to one minute
 	private static Logger logger;
 	private Timer timer;
 	private JSONArray jarr = new JSONArray();

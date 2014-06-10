@@ -2,8 +2,9 @@ package edu.ncsu.lubick.toolmanagement;
 
 import java.util.Date;
 
-import edu.ncsu.lubick.plugin.EventType;
-import edu.ncsu.lubick.plugin.InteractionEvent;
+import edu.ncsu.lubick.interactions.CommandEvent;
+import edu.ncsu.lubick.interactions.EventType;
+import edu.ncsu.lubick.interactions.InteractionEvent;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.KeyBindingDirectory;
 
@@ -48,7 +49,7 @@ public abstract class InteractionEventConversionState
 		return event.getType() == EventType.INVOCATION_KEYBOARD_SHORTCUT;
 	}
 
-	protected DurationDetectionState makeDurationDetectionStateForKeyBindingEvent(InteractionEvent event) {
+	protected DurationDetectionState makeDurationDetectionStateForKeyBindingEvent(CommandEvent event) {
 		DurationDetectionState dds = makeDurationDetectionStateForMenuEvent(event);
 		
 		dds.setCurrentEventsKeypresses(KeyBindingDirectory.lookUpKeyBinding(event.getCommandId()));
@@ -56,7 +57,7 @@ public abstract class InteractionEventConversionState
 		return dds;
 	}
 	
-	protected DurationDetectionState makeDurationDetectionStateForMenuEvent(InteractionEvent event) {
+	protected DurationDetectionState makeDurationDetectionStateForMenuEvent(CommandEvent event) {
 		DurationDetectionState dds = new DurationDetectionState();
 		
 		dds.setCurrentEventsCommandName(CommandNameDirectory.lookUpCommandName(event.getCommandId()));

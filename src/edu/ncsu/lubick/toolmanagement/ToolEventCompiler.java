@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import edu.ncsu.lubick.interactions.InteractionEvent;
 import edu.ncsu.lubick.plugin.CommandReceiver;
-import edu.ncsu.lubick.plugin.InteractionEvent;
 
 
 /**

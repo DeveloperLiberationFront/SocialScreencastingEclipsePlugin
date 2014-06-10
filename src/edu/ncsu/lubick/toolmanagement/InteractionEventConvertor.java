@@ -8,7 +8,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import edu.ncsu.lubick.plugin.InteractionEvent;
+import edu.ncsu.lubick.interactions.CommandEvent;
+import edu.ncsu.lubick.interactions.InteractionEvent;
 
 
 /**
@@ -120,7 +121,7 @@ class DefaultState extends InteractionEventConversionState
 
 		if (isKeyBindingEvent(event))
 		{
-			DurationDetectionState dds = makeDurationDetectionStateForKeyBindingEvent(event);
+			DurationDetectionState dds = makeDurationDetectionStateForKeyBindingEvent((CommandEvent) event);
 			dds.setIsKeybindingEvent(true);
 			setState(dds);
 
@@ -175,7 +176,7 @@ class ExpectingKeyBindingState extends InteractionEventConversionState
 				logUnusualBehavior("Time was different between menu event and keybinding event");
 				//continue with flow, just to see what happens
 			}
-			DurationDetectionState dds = makeDurationDetectionStateForMenuEvent(event);
+			DurationDetectionState dds = makeDurationDetectionStateForMenuEvent((CommandEvent) event);
 			dds.setIsKeybindingEvent(false);
 			setState(dds);
 		}

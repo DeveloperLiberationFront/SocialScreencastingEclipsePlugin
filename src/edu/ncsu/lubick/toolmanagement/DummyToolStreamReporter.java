@@ -9,9 +9,9 @@ package edu.ncsu.lubick.toolmanagement;
 public class DummyToolStreamReporter implements IToolStreamReporter {
 
 	@Override
-	public void storeEvent(ToolEvent toolEvent) {}
+	public void storeEvent(ToolEvent toolEvent) {/*empty*/}
 
 	@Override
-	public void isShuttingDown() {}
+	public void isShuttingDown() {/*empty*/}
 
 }

@@ -1,4 +1,7 @@
-package edu.ncsu.lubick.plugin;
+package edu.ncsu.lubick.instrumentation;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -6,11 +9,20 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
 
+import edu.ncsu.lubick.interactions.CommandEvent;
+import edu.ncsu.lubick.plugin.CommandReceiver;
+
 public class EclipseCommandListener implements IExecutionListener {
 
 	private static Logger logger;
 //	private final AtomicBoolean keyDown = new AtomicBoolean();
 	private CommandReceiver receiver;
+	
+	private static Set<String> blackList = new HashSet<>();
+	
+	static {
+		blackList.add("org.eclipse.ui.edit.delete");	//2014-06-10 added because it happens all the time (every time delete is pushed)
+	}
 	
 	public EclipseCommandListener(CommandReceiver receiver)
 	{
@@ -42,6 +54,10 @@ public class EclipseCommandListener implements IExecutionListener {
 		System.out.printf("commandId: %s%nevent:%s %n", commandId, event); //$NON-NLS-1$
 		
 		//System.out.println("keyDown: " + keyDown); //$NON-NLS-1$
+		
+		if (blackList.contains(commandId)) {
+			return;
+		}
 		
 		boolean keyInvocation = false;
 		

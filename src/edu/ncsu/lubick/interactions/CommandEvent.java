@@ -1,14 +1,12 @@
-package edu.ncsu.lubick.plugin;
+package edu.ncsu.lubick.interactions;
 
-import java.util.Date;
 
-public class CommandEvent implements InteractionEvent{
-	
-	
+public class CommandEvent extends InteractionEvent{
 	
 
 	private String commandId;
 	private boolean invokedWithKeyboard;
+	
 
 	public CommandEvent(String commandId, boolean invokedWithKeyboard)
 	{
@@ -33,24 +31,12 @@ public class CommandEvent implements InteractionEvent{
 	}
 
 	@Override
-	public boolean invokedWithKeyboardShortcut()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Date getDate()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public EventType getType()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if (invokedWithKeyboard) {
+			return EventType.INVOCATION_KEYBOARD_SHORTCUT;
+		}
+		return EventType.INVOCATION_GUI;
 	}
 
 }

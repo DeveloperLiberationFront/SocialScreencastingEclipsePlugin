@@ -13,13 +13,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -28,6 +22,9 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import edu.ncsu.lubick.instrumentation.EclipseCommandListener;
+import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
+import edu.ncsu.lubick.instrumentation.SWT_Instrumentation;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.util.CommandNameDirectory;
@@ -50,7 +47,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	// The shared instance
 	private static Activator plugin;
 	
-	private static Logger logger = Logger.getRootLogger();		//dummy value until properly set
+	static Logger logger = Logger.getRootLogger();		//dummy value until properly set
 	
 	private EclipseCommandListener commandListener;
 
@@ -73,10 +70,6 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 		System.out.println("normal startup");
 		
-		
-		
-
-		
 	}
 
 	private void setupLog4j() {
@@ -90,12 +83,14 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		FileAppender fa = makeFileAppender("GeneralLogging", "-ScreencastEclipseLog.log");
 
 		Logger.getRootLogger().addAppender(fa);
+		Logger.getRootLogger().setLevel(Level.INFO);
 		
 		
 		
 		NetworkToolStreamReporter.setLogger(Logger.getLogger("GeneralLogging." + NetworkToolStreamReporter.class.getName()));
 		EclipseCommandListener.setLogger(Logger.getLogger("GeneralLogging." + EclipseCommandListener.class.getName()));
 		setLogger(Logger.getLogger("GeneralLogging." + Activator.class.getName()));
+		SWT_Instrumentation.setLogger(Logger.getLogger("GeneralLogging." + SWT_Instrumentation.class.getName()));
 	}
 
 
@@ -187,75 +182,10 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 		systemCommandService.addExecutionListener(commandListener);
 
-//		workbench.addWindowListener(new EclipseWindowListener());
-//		
-//		IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
-//		
-//		for(IWorkbenchWindow w:windows) {
-//			w.getPartService().addPartListener(new EclipsePartListener());
-//		}
+		workbench.addWindowListener(new EclipseWindowListener(toolStreamCompiler));
 		
-		final Display display = workbench.getDisplay();
-		display.asyncExec(new Runnable() {
-			
-			@Override
-			public void run()
-			{
-				display.addFilter(SWT.Show, new Listener() {
-					
-					@Override
-					public void handleEvent(Event event)
-					{
-						logger.info("SWT.Show:");
-						logger.info("\t"+event);
-						Display innerDisplay = event.display;
-						if (innerDisplay != null) {
-							Shell shell = innerDisplay.getActiveShell();
-							if (shell != null) {
-								shell.addShellListener(new ShellAdapter() {
-									@Override
-									public void shellClosed(ShellEvent e)
-									{
-										logger.info("shellClosed: "+e);
-									}
-								});
-
-								shell.addListener(SWT.Hide, new Listener() {
-
-									@Override
-									public void handleEvent(Event e)
-									{
-										logger.info("SWT.Hide: "+e);
-									}
-								});
-								
-								shell.addListener(SWT.Dispose, new Listener() {
-
-									@Override
-									public void handleEvent(Event e)
-									{
-										logger.info("SWT.Dispose: "+e);
-									}
-								});
-
-								shell.addListener(SWT.Close, new Listener() {
-
-									@Override
-									public void handleEvent(Event e)
-									{
-										logger.info("SWT.Close: "+e);
-									}
-								});
-							}
-							else {
-								logger.info("display was null, nothing registered");
-							}
-						}
-						
-					}
-				});
-			}
-		});
+		Display display = workbench.getDisplay();
+		display.asyncExec(new SWT_Instrumentation(display, toolStreamCompiler));
 	}
 
 	@SuppressWarnings("unused")

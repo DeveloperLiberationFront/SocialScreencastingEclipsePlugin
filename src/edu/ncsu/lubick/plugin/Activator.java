@@ -1,8 +1,12 @@
 package edu.ncsu.lubick.plugin;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Collection;
 import java.util.Map;
+
+import javax.swing.Timer;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -16,7 +20,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -32,6 +35,8 @@ import org.osgi.framework.BundleContext;
 
 import edu.ncsu.lubick.instrumentation.EclipsePartListener;
 import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
+import edu.ncsu.lubick.rating.RatingData;
+import edu.ncsu.lubick.rating.ToolStreamRater;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.toolmanagement.ToolStreamDiskWriter;
@@ -198,6 +203,8 @@ public class Activator extends AbstractUIPlugin implements IStartup
 			@Override
 			public void run()
 			{
+				timerStuff();
+				
 				display.addFilter(SWT.Show, new Listener() {
 					
 					@Override
@@ -217,6 +224,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 				});
 			}
 		});
+		
 	}
 
 	private void muckingAround()
@@ -238,5 +246,45 @@ public class Activator extends AbstractUIPlugin implements IStartup
 			}
 			
 		}
+	}
+	
+	private void timerStuff()
+	{
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				
+				Timer timer = new Timer(5000, new ActionListener()
+				{
+
+					private boolean first = true;
+					private RatingData start;
+					private RatingData end;
+					
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						if(first)
+						{
+							System.out.println("Starting....................");
+							start = new RatingData();
+						}
+						else
+						{
+							System.out.println("Ending......................");
+							end = new RatingData();
+							ToolStreamRater rater = new ToolStreamRater();
+							System.out.println(rater.rate(start, end));
+						}
+						
+						first = !first;
+					}
+				});
+				
+				timer.setRepeats(true);
+				timer.start();
+			}
+		});
 	}
 }

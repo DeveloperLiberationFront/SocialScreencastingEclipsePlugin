@@ -6,6 +6,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+
+import edu.ncsu.lubick.rating.ToolStreamRater;
 
 public class EclipseCommandListener implements IExecutionListener {
 

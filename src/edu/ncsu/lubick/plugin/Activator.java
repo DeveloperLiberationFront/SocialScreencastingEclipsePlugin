@@ -82,11 +82,9 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	{
 		FileAppender fa = makeFileAppender("GeneralLogging", "-ScreencastEclipseLog.log");
 
-		Logger.getRootLogger().addAppender(fa);
-		Logger.getRootLogger().setLevel(Level.INFO);
+		Logger.getRootLogger().addAppender(fa);		
 		
-		
-		EclipseWindowListener.setLogger(logger);
+		EclipseWindowListener.setLogger(Logger.getLogger("GeneralLogging." + EclipseWindowListener.class.getName()));
 		NetworkToolStreamReporter.setLogger(Logger.getLogger("GeneralLogging." + NetworkToolStreamReporter.class.getName()));
 		EclipseCommandListener.setLogger(Logger.getLogger("GeneralLogging." + EclipseCommandListener.class.getName()));
 		setLogger(Logger.getLogger("GeneralLogging." + Activator.class.getName()));

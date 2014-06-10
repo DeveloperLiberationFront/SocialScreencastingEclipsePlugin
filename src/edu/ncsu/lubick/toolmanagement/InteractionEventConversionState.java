@@ -41,11 +41,11 @@ public abstract class InteractionEventConversionState
 		stateContext.previousEventNeedsRerun(b);		
 	}
 
-	protected boolean isKeyBindingEvent(InteractionEvent event) {
+	protected boolean isKeyBoardCommandInvocation(InteractionEvent event) {
 		return event.getType() == EventType.INVOCATION_KEYBOARD_SHORTCUT;
 	}
 	
-	protected boolean isMenuEvent(InteractionEvent event) {
+	protected boolean isGUICommandInvocation(InteractionEvent event) {
 		return event.getType() == EventType.INVOCATION_KEYBOARD_SHORTCUT;
 	}
 
@@ -64,9 +64,5 @@ public abstract class InteractionEventConversionState
 		dds.setCurrentEventsStartDate(event.getDate());
 		
 		return dds;
-	}
-
-	protected boolean wasActionEvent(InteractionEvent event) {
-		return isKeyBindingEvent(event) || isMenuEvent(event);
 	}
 }

@@ -24,7 +24,7 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 	
 	public static final int MAX_MENU_DURATION = 60000;
 	public static final int DEFAULT_MENU_DURATION = 20000;
-	public static final int THRESHOLD_MENU_DURATION = 3000;
+	public static final int THRESHOLD_MENU_DURATION = 2000;
 	public static final int MAX_KEYBINDING_DURATION = 15000;
 	public static final int DEFAULT_KEYBINDING_DURATION = 5000;
 	public static final int THRESHOLD_KEYBINDING_DURATION = 2000;
@@ -119,17 +119,18 @@ class DefaultState extends InteractionEventConversionState
 			return;
 		}
 
-		if (isKeyBindingEvent(event))
+		if (isKeyBoardCommandInvocation(event))
 		{
 			DurationDetectionState dds = makeDurationDetectionStateForKeyBindingEvent((CommandEvent) event);
 			dds.setIsKeybindingEvent(true);
 			setState(dds);
 
 		} 
-		else if (isMenuEvent(event))
+		else if (isGUICommandInvocation(event))
 		{
-			ExpectingKeyBindingState ekbs = new ExpectingKeyBindingState(event.getDate());
-			setState(ekbs);
+			DurationDetectionState dds = makeDurationDetectionStateForMenuEvent((CommandEvent) event);
+			dds.setIsKeybindingEvent(false);
+			setState(dds);
 		}
 		else
 		{
@@ -139,7 +140,7 @@ class DefaultState extends InteractionEventConversionState
 	}
 
 	private boolean isRelevantEvent(InteractionEvent event) {
-		return wasActionEvent(event);
+		return event instanceof CommandEvent;
 	}
 
 	@Override
@@ -148,55 +149,6 @@ class DefaultState extends InteractionEventConversionState
 	}
 
 
-
-
-}
-
-class ExpectingKeyBindingState extends InteractionEventConversionState 
-{
-
-	private Date dateOfPreviousEvent;
-
-	public ExpectingKeyBindingState(Date dateOfMenuEvent) 
-	{
-		this.dateOfPreviousEvent = dateOfMenuEvent;
-	}
-
-	@Override
-	public void sawInteractionEvent(InteractionEvent event) {
-		if (isMenuEvent(event))
-		{
-			logUnusualBehavior("Two menu events in a row?");
-			setState(new DefaultState());
-		} 
-		else if (isKeyBindingEvent(event)) 
-		{
-			if (!dateOfPreviousEvent.equals(event.getDate()))
-			{
-				logUnusualBehavior("Time was different between menu event and keybinding event");
-				//continue with flow, just to see what happens
-			}
-			DurationDetectionState dds = makeDurationDetectionStateForMenuEvent((CommandEvent) event);
-			dds.setIsKeybindingEvent(false);
-			setState(dds);
-		}
-		else {
-			if (dateOfPreviousEvent.equals(event.getDate()))
-			{
-				logUnusualBehavior("Probably nothing, but "+event+" was seen after a menu event, but before a keybinding event.  The time is okay, so, again, probably nothing.");
-			}
-			else 
-			{
-				logUnusualBehavior(event+" was seen after a menu event, but before a keybinding event.");
-				setState(new DefaultState());
-			}
-		}
-	}
-
-	@Override
-	public void isShuttingDown(Date shutdowndate) {
-		logUnusualBehavior("Was in the middle of a menu event when received shutdown");
-	}
 
 
 }
@@ -219,19 +171,19 @@ class DurationDetectionState extends InteractionEventConversionState
 	{
 		ToolEvent createdEvent = null;
 		
-		if (wasActionEvent(event))
+		if (event instanceof CommandEvent)
 		{
 			createdEvent = makeToolEventEndingAtThisDate(event.getDate());
 			postConvertedEvent(createdEvent);
 			DefaultState newState = new DefaultState();
 			setState(newState);
-			//newState.sawInteractionEvent(event);
 			setEventUnHandled(true);
 		}
 		else
 		{
 			if (currentDurationWouldBeTooShort(event.getDate()))
 			{
+				//this is probably left over menu/window noise.  
 				return;
 			}
 			createdEvent = makeToolEventEndingAtThisDate(event.getDate());

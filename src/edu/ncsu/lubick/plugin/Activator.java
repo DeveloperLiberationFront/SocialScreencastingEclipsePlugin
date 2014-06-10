@@ -86,7 +86,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		Logger.getRootLogger().setLevel(Level.INFO);
 		
 		
-		
+		EclipseWindowListener.setLogger(logger);
 		NetworkToolStreamReporter.setLogger(Logger.getLogger("GeneralLogging." + NetworkToolStreamReporter.class.getName()));
 		EclipseCommandListener.setLogger(Logger.getLogger("GeneralLogging." + EclipseCommandListener.class.getName()));
 		setLogger(Logger.getLogger("GeneralLogging." + Activator.class.getName()));

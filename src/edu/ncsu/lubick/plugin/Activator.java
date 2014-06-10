@@ -1,7 +1,5 @@
 package edu.ncsu.lubick.plugin;
 
-import java.io.Console;
-import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
@@ -35,7 +33,6 @@ import edu.ncsu.lubick.instrumentation.EclipsePartListener;
 import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
-import edu.ncsu.lubick.toolmanagement.ToolStreamDiskWriter;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.EclipseCommandNameService;
 import edu.ncsu.lubick.util.EclipseKeyBindingService;
@@ -180,14 +177,6 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		System.out.println("Starting early");
 		setupLog4j();
 		IWorkbench workbench = PlatformUI.getWorkbench();
-
-		File outputFolder = new File(MONITOR_FOLDER);
-		if (!outputFolder.exists())
-		{
-			logger.fatal("SERIOUS PROBLEM!  THE MONITOR FOLDER DOESN'T EXIST");
-		}
-
-		
 		
 		EclipseKeyBindingService adapter = new EclipseKeyBindingService((IBindingService) workbench.getAdapter(IBindingService.class));
 		KeyBindingDirectory.initializeBindingService(adapter);
@@ -195,8 +184,6 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		ICommandService systemCommandService = (ICommandService) workbench.getAdapter(ICommandService.class);
 		EclipseCommandNameService commandService = new EclipseCommandNameService(systemCommandService);
 		CommandNameDirectory.initializeCommandService(commandService);
-		
-		ToolStreamDiskWriter.setOutputFolder(outputFolder);
 		
 		ToolEventCompiler toolStreamCompiler = new ToolEventCompiler();
 		

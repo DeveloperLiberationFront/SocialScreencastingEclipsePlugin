@@ -51,13 +51,14 @@ class ChangeRater extends AbstractRater {
 				}
 			}
 		}
-		float diff = counter/(float)(width1 * height1); //decimal from 0 to 1
-
-		if (diff > IDEAL_CHANGE/100.f) //"ideal change" is 10% for now
+		
+		float diff = 100 * counter/(float)(width1 * height1); //number from 0 to 100
+		
+		if (diff > IDEAL_CHANGE) 
 		{
-			return IDEAL_CHANGE/diff; // 10/0.2 gives a score of 50 (out of 100 max)
+			return 2000/(diff-IDEAL_CHANGE+20); // Trust me it works
 		}
-		return 10 + diff / IDEAL_CHANGE * 9000.f; //min 10, max 100
+		return -2000/(diff-IDEAL_CHANGE-20); //graph it if you don't believe me, http://tinyurl.com/mp5tjkq
 	}
 
 	@Override

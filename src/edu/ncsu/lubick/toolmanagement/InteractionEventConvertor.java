@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import edu.ncsu.lubick.interactions.CommandEvent;
 import edu.ncsu.lubick.interactions.InteractionEvent;
+import edu.ncsu.lubick.rating.ToolStreamRater;
 
 
 /**
@@ -118,6 +119,8 @@ class DefaultState extends InteractionEventConversionState
 		{
 			return;
 		}
+		
+		startData = new ToolEventData();
 
 		if (isKeyBoardCommandInvocation(event))
 		{
@@ -175,6 +178,7 @@ class DurationDetectionState extends InteractionEventConversionState
 		{
 			createdEvent = makeToolEventEndingAtThisDate(event.getDate());
 			postConvertedEvent(createdEvent);
+			startData = new ToolEventData();
 			DefaultState newState = new DefaultState();
 			setState(newState);
 			setEventUnHandled(true);
@@ -196,15 +200,21 @@ class DurationDetectionState extends InteractionEventConversionState
 
 	private ToolEvent makeToolEventEndingAtThisDate(Date date) {
 		ToolEvent createdEvent = null;
+		endData = new ToolEventData();
+		
+		ToolStreamRater rater = new ToolStreamRater();
+		float rating = rater.rate(startData, endData);
+		
 		if (currentDurationWouldBeTooLong(date))
 		{
-			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, eventStartDate, defaultLength);
+			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, rating, eventStartDate, defaultLength);
 		}
 		else
 		{
 			int duration = (int) getElapsedTime(date);
-			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, eventStartDate, duration);
+			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, rating, eventStartDate, duration);
 		}
+		
 		return createdEvent;
 	}
 

@@ -11,6 +11,9 @@ import edu.ncsu.lubick.util.KeyBindingDirectory;
 public abstract class InteractionEventConversionState 
 {
 	private static InteractionEventConversionStateContext stateContext;
+	
+	protected static ToolEventData startData;
+	protected  static ToolEventData endData;
 
 	public static void setStateContext(InteractionEventConversionStateContext newStateContext) {
 		stateContext = newStateContext;
@@ -64,5 +67,15 @@ public abstract class InteractionEventConversionState
 		dds.setCurrentEventsStartDate(event.getDate());
 		
 		return dds;
+	}
+	
+	public ToolEventData getStartData()
+	{
+		return startData;
+	}
+	
+	public ToolEventData getEndData()
+	{
+		return endData;
 	}
 }

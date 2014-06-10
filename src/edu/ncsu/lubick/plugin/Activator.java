@@ -29,10 +29,10 @@ import org.osgi.framework.BundleContext;
 import edu.ncsu.lubick.instrumentation.EclipseCommandListener;
 import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
 import edu.ncsu.lubick.instrumentation.SWT_Instrumentation;
-import edu.ncsu.lubick.rating.RatingData;
 import edu.ncsu.lubick.rating.ToolStreamRater;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
+import edu.ncsu.lubick.toolmanagement.ToolEventData;
 import edu.ncsu.lubick.util.CommandNameDirectory;
 import edu.ncsu.lubick.util.EclipseCommandNameService;
 import edu.ncsu.lubick.util.EclipseKeyBindingService;
@@ -229,8 +229,8 @@ public class Activator extends AbstractUIPlugin implements IStartup
 				{
 
 					private boolean first = true;
-					private RatingData start;
-					private RatingData end;
+					private ToolEventData start;
+					private ToolEventData end;
 					
 					@Override
 					public void actionPerformed(ActionEvent e)
@@ -238,12 +238,12 @@ public class Activator extends AbstractUIPlugin implements IStartup
 						if(first)
 						{
 							System.out.println("Starting....................");
-							start = new RatingData();
+							start = new ToolEventData();
 						}
 						else
 						{
 							System.out.println("Ending......................");
-							end = new RatingData();
+							end = new ToolEventData();
 							ToolStreamRater rater = new ToolStreamRater();
 							System.out.println(rater.rate(start, end));
 						}

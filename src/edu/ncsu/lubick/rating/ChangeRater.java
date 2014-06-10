@@ -1,5 +1,7 @@
 package edu.ncsu.lubick.rating;
 
+import edu.ncsu.lubick.toolmanagement.ToolEventData;
+
 
 
 
@@ -8,7 +10,7 @@ class ChangeRater extends AbstractRater {
 	public static final float IDEAL_CHANGE = 10.0f;
 
 	@Override
-	public float rate(RatingData start, RatingData end)
+	public float rate(ToolEventData start, ToolEventData end)
 	{
 		float rating = 0;
 		rating += tabChange(start, end);
@@ -18,7 +20,7 @@ class ChangeRater extends AbstractRater {
 		return rating;
 	}
 
-	private float tabChange(RatingData start, RatingData end)
+	private float tabChange(ToolEventData start, ToolEventData end)
 	{
 		//getActivePage().isPartVisible(part)
 		
@@ -32,7 +34,7 @@ class ChangeRater extends AbstractRater {
 		}
 	}
 	
-	private float differenceImage(RatingData start, RatingData end)
+	private float differenceImage(ToolEventData start, ToolEventData end)
 	{
 		int width1 = start.getImage().getWidth();
 		int width2 = end.getImage().getWidth();

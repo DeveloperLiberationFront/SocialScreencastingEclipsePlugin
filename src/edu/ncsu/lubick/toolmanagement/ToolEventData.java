@@ -1,4 +1,4 @@
-package edu.ncsu.lubick.rating;
+package edu.ncsu.lubick.toolmanagement;
 
 import java.awt.AWTException;
 import java.awt.Rectangle;
@@ -12,7 +12,6 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
@@ -22,7 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class RatingData {
+public class ToolEventData {
 	private IWorkbench workbench;
 	private IWorkbenchWindow workbenchWindow;
 	private IWorkbenchPage activePage;
@@ -32,7 +31,7 @@ public class RatingData {
 	private BufferedImage img;
 	private List<DocumentEvent> changeEvents;
 	
-	public RatingData() {
+	public ToolEventData() {
 		setWorkbench(PlatformUI.getWorkbench());
 		setWorkbenchWindow(getWorkbench().getWorkbenchWindows()[0]); // TODO this is hacky and should be getActiveWorkbenchWindow(), it just isn't working correctly for the testing stuff...
 		setActivePage(getWorkbenchWindow().getActivePage());

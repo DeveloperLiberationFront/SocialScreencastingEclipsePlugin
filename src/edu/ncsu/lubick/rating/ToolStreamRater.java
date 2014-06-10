@@ -3,6 +3,8 @@ package edu.ncsu.lubick.rating;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.ncsu.lubick.toolmanagement.ToolEventData;
+
 public class ToolStreamRater {
 
 	private List<AbstractRater> raters;
@@ -13,7 +15,7 @@ public class ToolStreamRater {
 		raters.add(new ChangeRater());
 	}
 	
-	public float rate(RatingData start, RatingData end)
+	public float rate(ToolEventData start, ToolEventData end)
 	{
 		float rate = 0;
 		

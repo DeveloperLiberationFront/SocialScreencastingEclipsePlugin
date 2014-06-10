@@ -1,6 +1,8 @@
 package edu.ncsu.lubick.rating;
 
+import edu.ncsu.lubick.toolmanagement.ToolEventData;
+
 
 abstract class AbstractRater {
-	public abstract float rate(RatingData start, RatingData end);
+	public abstract float rate(ToolEventData start, ToolEventData end);
 }

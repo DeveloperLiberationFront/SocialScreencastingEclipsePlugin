@@ -48,7 +48,6 @@ public class InteractionEventConvertor implements InteractionEventConversionStat
 	public void logUnusualBehavior(String behavior)
 	{
 		loggerForProblems.info(this.loggingPrefix + behavior);
-		System.out.println(this.loggingPrefix + behavior);
 	}
 
 	/*

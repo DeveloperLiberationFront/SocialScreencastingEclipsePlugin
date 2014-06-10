@@ -31,7 +31,6 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 	{
 		setUpToolStreamReportTimer();
 		logger.debug("Network Stream Reporter set up");
-		System.out.println("Network Stream Reporter set up");
 	}
 
 	private void setUpToolStreamReportTimer()
@@ -60,7 +59,6 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 				try
 				{
 					reportThisSetOfEvents(copy);
-					System.out.println("Successfully reported "+copy.length()+" tools");	//for dev purposes
 					logger.info("Successfully reported "+copy.length()+" tools");	//for long term debugging
 				}
 				catch (IOException | JSONException e)
@@ -82,7 +80,6 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 		}
 		HttpPost httpPost = new HttpPost("http://localhost:4443/reportTool");
 		try {
-			//I don't know if this helps or not
 			httpPost.setConfig(RequestConfig.custom().setConnectionRequestTimeout(5000).setConnectTimeout(5000).build());
 
 
@@ -109,12 +106,10 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 			{
 				jarr.put(toolEvent.toJSONObject());
 				logger.debug(jarr);
-				System.out.println(jarr);
 			}
 			catch (JSONException e)
 			{
 				logger.error("Problem storing "+toolEvent,e);
-				e.printStackTrace();
 			}
 		}
 
@@ -124,7 +119,6 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 	public void isShuttingDown()
 	{
 		logger.debug("Got shutdown message");
-		System.out.println("shutdown NetworkTool");
 		try
 		{
 			client.close();
@@ -140,11 +134,5 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 		NetworkToolStreamReporter.logger = logger;
 	}
 
-	@Override
-	protected void finalize() throws Throwable
-	{
-		System.out.println("Being garbage collected");
-		super.finalize();
-	}
 
 }

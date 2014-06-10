@@ -22,15 +22,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import edu.ncsu.lubick.instrumentation.EclipsePartListener;
-import edu.ncsu.lubick.instrumentation.EclipseWindowListener;
 import edu.ncsu.lubick.toolmanagement.NetworkToolStreamReporter;
 import edu.ncsu.lubick.toolmanagement.ToolEventCompiler;
 import edu.ncsu.lubick.util.CommandNameDirectory;
@@ -49,7 +46,6 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "ScreenCastingEclipsePlugin"; //$NON-NLS-1$
-	private static final String MONITOR_FOLDER = "D:\\workspace\\ScreenCastingLocalHub\\HF";
 
 	// The shared instance
 	private static Activator plugin;
@@ -191,13 +187,13 @@ public class Activator extends AbstractUIPlugin implements IStartup
 
 		systemCommandService.addExecutionListener(commandListener);
 
-		workbench.addWindowListener(new EclipseWindowListener());
-		
-		IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
-		
-		for(IWorkbenchWindow w:windows) {
-			w.getPartService().addPartListener(new EclipsePartListener());
-		}
+//		workbench.addWindowListener(new EclipseWindowListener());
+//		
+//		IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
+//		
+//		for(IWorkbenchWindow w:windows) {
+//			w.getPartService().addPartListener(new EclipsePartListener());
+//		}
 		
 		final Display display = workbench.getDisplay();
 		display.asyncExec(new Runnable() {

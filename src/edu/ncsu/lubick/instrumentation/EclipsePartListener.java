@@ -4,6 +4,8 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
 
 public class EclipsePartListener implements IPartListener2 {
+	
+	
 	@Override
 	public void partVisible(IWorkbenchPartReference partRef)
 	{

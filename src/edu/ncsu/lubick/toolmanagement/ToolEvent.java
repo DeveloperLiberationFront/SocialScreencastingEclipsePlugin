@@ -12,6 +12,8 @@ public class ToolEvent
 	private float rating;
 	private Date timeStamp;
 	private int duration;
+	private ToolEventData startData;
+	private ToolEventData endData;
 	
 	public static final String TOOL_NAME = "Tool_Name";
 	public static final String TOOL_CLASS = "Tool_Class";
@@ -19,8 +21,10 @@ public class ToolEvent
 	public static final String TOOL_RATING = "Tool_Rating";
 	public static final String TOOL_TIMESTAMP = "Tool_Timestamp";
 	public static final String TOOL_DURATION = "Tool_Duration";
+	public static final String TOOL_START_DATA = "Tool_Start_Data";
+	public static final String TOOL_END_DATA = "Tool_End_Data";
 	
-	public ToolEvent(String toolName, String toolClass, String keyPresses, float rating, Date timeStamp, int duration) 
+	public ToolEvent(String toolName, String toolClass, String keyPresses, float rating, Date timeStamp, int duration, ToolEventData startData, ToolEventData endData) 
 	{
 		this.toolName = toolName;
 		this.toolClass = toolClass;
@@ -28,6 +32,8 @@ public class ToolEvent
 		this.rating = rating;
 		this.timeStamp = timeStamp;
 		this.duration = duration;
+		this.startData = startData;
+		this.endData = endData;
 	}
 
 	public JSONObject toJSONObject() throws JSONException 
@@ -40,6 +46,8 @@ public class ToolEvent
 		jobj.put(TOOL_RATING, rating);
 		jobj.put(TOOL_TIMESTAMP, timeStamp.getTime());
 		jobj.put(TOOL_DURATION, duration);
+		jobj.put(TOOL_START_DATA, startData.toJSON());
+		jobj.put(TOOL_END_DATA, endData.toJSON());
 		
 		return jobj;
 	}

@@ -207,12 +207,12 @@ class DurationDetectionState extends InteractionEventConversionState
 		
 		if (currentDurationWouldBeTooLong(date))
 		{
-			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, rating, eventStartDate, defaultLength);
+			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, rating, eventStartDate, defaultLength, startData, endData);
 		}
 		else
 		{
 			int duration = (int) getElapsedTime(date);
-			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, rating, eventStartDate, duration);
+			createdEvent = new ToolEvent(eventCommandName, eventCommandClass, eventKeyPress, rating, eventStartDate, duration, startData, endData);
 		}
 		
 		return createdEvent;

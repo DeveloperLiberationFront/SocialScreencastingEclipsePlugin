@@ -20,6 +20,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ToolEventData {
 	private IWorkbench workbench;
@@ -33,11 +36,11 @@ public class ToolEventData {
 	
 	public ToolEventData() {
 		setWorkbench(PlatformUI.getWorkbench());
-		setWorkbenchWindow(getWorkbench().getWorkbenchWindows()[0]); // TODO this is hacky and should be getActiveWorkbenchWindow(), it just isn't working correctly for the testing stuff...
+		setWorkbenchWindow(getWorkbench().getActiveWorkbenchWindow());
 		setActivePage(getWorkbenchWindow().getActivePage());
 		setActivePart(getActivePage().getActivePart());
 		setTime(new Date());
-		//setupDocument();
+		setupDocument();
 		setImage();
 	}
 	
@@ -142,5 +145,32 @@ public class ToolEventData {
 	
 	private void setTime(Date time) {
 		this.time = time;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		try
+		{
+			json.put("time", getTime());
+			
+			JSONArray changeEventsJson = new JSONArray();
+			for(DocumentEvent event : getChangeEvents())
+			{
+				JSONObject eventJson = new JSONObject();
+				eventJson.put("text", event.getText());
+				eventJson.put("replaced_length", event.getLength());
+			}
+			json.put("events", changeEventsJson);
+			
+			json.put("active_document", getActivePart().getTitle());
+			json.put("image", getImage().getRaster().toString());
+		}
+		catch(JSONException e)
+		{
+			System.out.println("Failed to convert ToolEventData to Json");
+		}
+		
+		
+		return json;
 	}
 }

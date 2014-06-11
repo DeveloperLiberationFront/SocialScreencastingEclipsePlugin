@@ -5,7 +5,7 @@ import edu.ncsu.lubick.toolmanagement.ToolEventData;
 
 
 
-class ChangeRater extends AbstractRater {
+public class ChangeRater extends AbstractRater {
 
 	public static final float IDEAL_CHANGE = 10.0f;
 
@@ -20,9 +20,11 @@ class ChangeRater extends AbstractRater {
 		return rating;
 	}
 
-	private float tabChange(ToolEventData start, ToolEventData end)
+	public float tabChange(ToolEventData start, ToolEventData end)
 	{
 		//getActivePage().isPartVisible(part)
+		
+		//System.out.println("Is the page visible: " + start.getActivePage().isPartVisible(start.getActivePart()));
 		
 		if(start.getActivePart().equals(end.getActivePart()))
 		{
@@ -34,7 +36,7 @@ class ChangeRater extends AbstractRater {
 		}
 	}
 	
-	private float differenceImage(ToolEventData start, ToolEventData end)
+	public float differenceImage(ToolEventData start, ToolEventData end)
 	{
 		int width1 = start.getImage().getWidth();
 		int width2 = end.getImage().getWidth();
@@ -57,7 +59,7 @@ class ChangeRater extends AbstractRater {
 		return getRatingBasedOnPercent(diff);
 	}
 
-	private float getRatingBasedOnPercent(float percent)
+	public float getRatingBasedOnPercent(float percent)
 	{
 		if (percent > IDEAL_CHANGE) 
 		{

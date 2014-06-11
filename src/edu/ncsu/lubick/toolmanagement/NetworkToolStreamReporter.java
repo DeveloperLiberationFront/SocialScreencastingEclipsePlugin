@@ -47,6 +47,7 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 				{
 					try
 					{
+						logger.debug("data: " + copy);
 						copy = new JSONArray(jarr.toString());
 						jarr = new JSONArray();
 					}
@@ -87,6 +88,8 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 			nvps.add(new BasicNameValuePair("pluginName", "Eclipse"));
 			nvps.add(new BasicNameValuePair("toolUsages", copy.toString()));
 
+			System.out.println("JSON data: ");
+			System.out.println("\t" + copy.toString(2));
 
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 			client.execute(httpPost);

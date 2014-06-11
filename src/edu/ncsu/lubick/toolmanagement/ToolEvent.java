@@ -5,6 +5,8 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.ncsu.lubick.rating.ChangeRater;
+
 
 public class ToolEvent 
 {
@@ -18,7 +20,7 @@ public class ToolEvent
 	public static final String TOOL_NAME = "Tool_Name";
 	public static final String TOOL_CLASS = "Tool_Class";
 	public static final String TOOL_KEY_PRESSES = "Tool_Key_Presses";
-	public static final String TOOL_RATING = "Tool_Rating";
+	public static final String TOOL_SCORE = "Tool_Score";
 	public static final String TOOL_TIMESTAMP = "Tool_Timestamp";
 	public static final String TOOL_DURATION = "Tool_Duration";
 	public static final String TOOL_START_DATA = "Tool_Start_Data";
@@ -43,11 +45,20 @@ public class ToolEvent
 		jobj.put(TOOL_NAME, toolName);
 		jobj.put(TOOL_CLASS, toolClass);
 		jobj.put(TOOL_KEY_PRESSES, keyPresses);
-		jobj.put(TOOL_RATING, rating);
+		jobj.put(TOOL_SCORE, rating);
 		jobj.put(TOOL_TIMESTAMP, timeStamp.getTime());
 		jobj.put(TOOL_DURATION, duration);
 		jobj.put(TOOL_START_DATA, startData.toJSON());
 		jobj.put(TOOL_END_DATA, endData.toJSON());
+		
+		JSONObject ratingData = new JSONObject();
+		
+		ChangeRater changeRater = new ChangeRater();
+		
+		ratingData.put("difference_image", changeRater.differenceImage(startData, endData));
+		ratingData.put("change_tabs", changeRater.tabChange(startData, endData));
+		
+		jobj.put("rating_data", ratingData);
 		
 		return jobj;
 	}

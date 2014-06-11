@@ -94,7 +94,6 @@ public class ToolEventData {
 				public void run() {
 					org.eclipse.swt.graphics.Rectangle bounds = getWorkbenchWindow().getShell().getBounds();
 					Rectangle rect = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-					System.out.println("Rect: " + rect);
 					img = robot.createScreenCapture(rect);	
 				}
 			});

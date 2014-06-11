@@ -23,12 +23,12 @@ public class ToolStreamRater {
 		{
 			float toolRate = rater.rate(start, end);
 			rate += toolRate;
-			System.out.println("Rate of " + rater + ": " + toolRate);
+			//System.out.println("Rate of " + rater + ": " + toolRate);
 		}
 		
 		rate /= raters.size();
 		
-		System.out.println("Rate of Tool = " + rate);
+		//System.out.println("Rate of Tool = " + rate);
 		return rate;
 	}
 }

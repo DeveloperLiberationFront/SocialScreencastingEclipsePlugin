@@ -18,16 +18,10 @@ import edu.ncsu.lubick.plugin.CommandReceiver;
  */
 public class ToolEventCompiler implements CommandReceiver
 {
-
-	private static Logger fileLogger;
+	private static Logger fileLogger = Logger.getLogger(ToolEventCompiler.class);
 
 	private IToolStreamReporter toolReporter;
 	private InteractionEventConvertor interactionEventConvertor;
-	
-	public static void setLogger(Logger logger) 
-	{
-		fileLogger = logger;
-	}
 	
 	public ToolEventCompiler() 
 	{
@@ -78,6 +72,7 @@ public class ToolEventCompiler implements CommandReceiver
 		
 	}
 
+	@Override
 	public void isShuttingDown() 
 	{
 		interactionEventConvertor.isShuttingDown(new Date());
@@ -88,6 +83,10 @@ public class ToolEventCompiler implements CommandReceiver
 		
 		toolReporter.isShuttingDown();
 		fileLogger.info("Eclipse is shutting down "+new Date());
+	}
+
+	public static void setupLogging() {
+		//does nothing.  A call to this will invoke the static initializer, making logging work at the right time.
 	}
 
 }

@@ -72,47 +72,31 @@ public class Activator extends AbstractUIPlugin implements IStartup
 		
 	}
 
-	private void setupLog4j() {
-		makeLoggerForToolStreams();
-		makeGeneralPurposeLogger();
-
-	}
-
 	private void makeGeneralPurposeLogger()
 	{
-		FileAppender fa = makeFileAppender("GeneralLogging", "-ScreencastEclipseLog.log");
-
-		Logger.getRootLogger().addAppender(fa);		
-		
-		EclipseWindowListener.setLogger(Logger.getLogger("GeneralLogging." + EclipseWindowListener.class.getName()));
-		NetworkToolStreamReporter.setLogger(Logger.getLogger("GeneralLogging." + NetworkToolStreamReporter.class.getName()));
-		EclipseCommandListener.setLogger(Logger.getLogger("GeneralLogging." + EclipseCommandListener.class.getName()));
-		setLogger(Logger.getLogger("GeneralLogging." + Activator.class.getName()));
-		SWT_Instrumentation.setLogger(Logger.getLogger("GeneralLogging." + SWT_Instrumentation.class.getName()));
-	}
-
-
-
-	private void makeLoggerForToolStreams()
-	{
-		FileAppender fa = makeFileAppender("ToolStreamLogging", "-ToolStreamLog.log");
+		FileAppender fa = makeFileAppender("-ScreencastEclipseLog.log");
 		ConsoleAppender ca = makeConsoleAppender();
-	
-		Logger.getRootLogger().addAppender(fa);
+		
+		Logger.getRootLogger().addAppender(fa);		
 		Logger.getRootLogger().addAppender(ca);
-	
-		ToolEventCompiler.setLogger(Logger.getLogger("ToolStreamLogging." + ToolEventCompiler.class.getName()));
+		
+		EclipseWindowListener.setupLogging();
+		NetworkToolStreamReporter.setupLogging();
+		EclipseCommandListener.setupLogging();
+		setLogger(Logger.getLogger(Activator.class));
+		SWT_Instrumentation.setupLogging();
+		ToolEventCompiler.setupLogging();
 	}
+
 
 	private ConsoleAppender makeConsoleAppender()
 	{
 		return new ConsoleAppender(new PatternLayout("%-4r [%t] %-5p %c{1} %x - %m%n"));
 	}
 
-	private FileAppender makeFileAppender(String name, String suffix)
+	private FileAppender makeFileAppender(String suffix)
 	{
 		FileAppender fa = new FileAppender();
-		fa.setName(name);
 		fa.setFile(getWorkspaceName() + suffix);
 		fa.setLayout(new PatternLayout("%-4r [%t] %-5p %c{1} %x - %m%n"));
 		fa.setThreshold(Level.DEBUG);
@@ -164,7 +148,7 @@ public class Activator extends AbstractUIPlugin implements IStartup
 	@Override
 	public void earlyStartup() {
 		System.out.println("Starting early");
-		setupLog4j();
+		makeGeneralPurposeLogger();
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
 		EclipseKeyBindingService adapter = new EclipseKeyBindingService((IBindingService) workbench.getAdapter(IBindingService.class));

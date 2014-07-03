@@ -11,15 +11,16 @@ import edu.ncsu.lubick.plugin.CommandReceiver;
 public class EclipseWindowListener implements IWindowListener {
 	
 	private CommandReceiver receiver;
-	private static Logger logger;
+	
+	private static final Logger logger = Logger.getLogger(EclipseWindowListener.class);
 	
 	public EclipseWindowListener(CommandReceiver toolStreamCompiler)
 	{
 		this.receiver = toolStreamCompiler;
 	}
 	
-	public static void setLogger(Logger newLogger) {
-		logger = newLogger;
+	public static void setupLogging() {
+		//does nothing.  A call to this will invoke the static initializer, making logging work at the right time.
 	}
 
 	@Override

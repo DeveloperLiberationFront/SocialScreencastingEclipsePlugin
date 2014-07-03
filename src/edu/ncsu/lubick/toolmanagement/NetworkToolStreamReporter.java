@@ -20,8 +20,9 @@ import org.json.JSONException;
 
 public class NetworkToolStreamReporter implements IToolStreamReporter {
 
-	private static final long DELAY_FOR_REPORTING_MS = 600_000; //XXX fix back to one minute
-	private static Logger logger;
+	private static final long DELAY_FOR_REPORTING_MS = 60_000; //XXX fix back to one minute
+	private static final Logger logger = Logger.getLogger(NetworkToolStreamReporter.class);
+	
 	private Timer timer;
 	private JSONArray jarr = new JSONArray();
 	private CloseableHttpClient client = HttpClients.createDefault();
@@ -129,9 +130,8 @@ public class NetworkToolStreamReporter implements IToolStreamReporter {
 		}
 	}
 
-	public static void setLogger(Logger logger)
-	{
-		NetworkToolStreamReporter.logger = logger;
+	public static void setupLogging() {
+		//does nothing.  A call to this will invoke the static initializer, making logging work at the right time.
 	}
 
 

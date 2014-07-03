@@ -97,8 +97,7 @@ public class EclipseCommandListener implements IExecutionListener {
 		}
 	}
 
-	public static void setLogger(Logger logger)
-	{
-		EclipseCommandListener.logger = logger;
+	public static void setupLogging() {
+		//does nothing.  A call to this will invoke the static initializer, making logging work at the right time.
 	}
 }

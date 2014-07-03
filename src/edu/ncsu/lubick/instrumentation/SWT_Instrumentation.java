@@ -13,7 +13,8 @@ import edu.ncsu.lubick.plugin.CommandReceiver;
 
 
 public class SWT_Instrumentation implements Runnable {
-	private static Logger logger;
+	
+	private static final Logger logger = Logger.getLogger(SWT_Instrumentation.class);
 	private final Display display;
 	private CommandReceiver receiver;
 
@@ -61,8 +62,7 @@ public class SWT_Instrumentation implements Runnable {
 		});
 	}
 
-	public static void setLogger(Logger newLogger)
-	{
-		logger = newLogger;
+	public static void setupLogging() {
+		//does nothing.  A call to this will invoke the static initializer, making logging work at the right time.
 	}
 }
